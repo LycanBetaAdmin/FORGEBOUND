@@ -200,21 +200,35 @@ Write-Mask $b @(
     '.gyyyyg.',
     '..gggg..') @{ g = '#8C6420'; y = '#F2C04E'; k = '#241A36'; r = '#E07CFF'; h = '#FFE6FF' } 0 0
 Save-Tex $b $blockDir 'rune_table_plaque'
-# smooth gem (every crystal on the table): a soft light-to-deep violet gradient across each face with a bright edge
-# line on the lit side and a faint glowing band through the middle
+# crystal (floating crystal and shards): blue at the top (v 0) shading to violet at the bottom, light on the left of each
+# face and deep on the right, a bright edge line and a soft facet line
 $b = New-Tex
-$stops = @(@(0, 244, 226, 255), @(0.2, 220, 176, 255), @(0.55, 168, 104, 240), @(0.85, 124, 50, 198), @(1, 92, 30, 160))
+$top = @(@(196, 236, 255), @(96, 170, 255), @(48, 96, 230))
+$bot = @(@(232, 196, 255), @(170, 96, 245), @(98, 36, 184))
 for ($y = 0; $y -lt 16; $y++) {
+    $v = $y / 15
     for ($x = 0; $x -lt 16; $x++) {
-        $t = $x / 15; $k = 0; while ($t -gt $stops[$k + 1][0]) { $k++ }
-        $f = ($t - $stops[$k][0]) / ($stops[$k + 1][0] - $stops[$k][0])
-        $glowRow = [Math]::Max(0, 1 - [Math]::Abs($y - 7.5) / 4) * 22
-        $c = 1..3 | ForEach-Object { [int][Math]::Min(255, $stops[$k][$_] + ($stops[$k + 1][$_] - $stops[$k][$_]) * $f + $glowRow) }
-        if ($x -eq 1) { $c = @(255, 246, 255) }
+        $u = $x / 15
+        $c = 0..2 | ForEach-Object {
+            $i = $_
+            $l = $top[0][$i] + ($bot[0][$i] - $top[0][$i]) * $v; $m = $top[1][$i] + ($bot[1][$i] - $top[1][$i]) * $v; $d = $top[2][$i] + ($bot[2][$i] - $top[2][$i]) * $v
+            $val = if ($u -lt 0.5) { $l + ($m - $l) * ($u / 0.5) } else { $m + ($d - $m) * (($u - 0.5) / 0.5) }
+            [int][Math]::Max(0, [Math]::Min(255, $val))
+        }
+        if ($x -eq 1) { $c = @(250, 250, 255) } elseif ($x -eq 9) { $c = $c | ForEach-Object { [int][Math]::Min(255, $_ + 34) } }
         $b.SetPixel($x, $y, [System.Drawing.Color]::FromArgb(255, $c[0], $c[1], $c[2]))
     }
 }
 Save-Tex $b $blockDir 'rune_table_gem'
+# crystal band: rows 0..2 the outer face (light gold rim, violet rune plates between gold studs, dark gold rim),
+# rows 4..7 plain gold for the band's edges
+$b = New-Tex
+for ($x = 0; $x -lt 16; $x++) {
+    Set-Px $b $x 0 '#F2C04E'; Set-Px $b $x 2 '#B8862B'
+    Set-Px $b $x 1 ($(switch ($x % 4) { 0 { '#E0A33A' } 1 { '#4A1690' } 2 { '#E07CFF' } 3 { '#4A1690' } }))
+    for ($y = 4; $y -lt 8; $y++) { Set-Px $b $x $y ($(if ($y -eq 4) { '#F2C04E' } else { '#D99A2E' })) }
+}
+Save-Tex $b $blockDir 'rune_table_band'
 # books: (0,0) 4x5 violet cover, (4,0) 3x4 crimson cover, (0,6) 5x2 violet spine, (0,9) 4x2 crimson spine,
 # (8..15, 0..7) violet leather, (8..15, 8..13) crimson leather, row 15 page edges
 $b = New-Tex
