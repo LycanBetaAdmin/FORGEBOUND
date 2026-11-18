@@ -200,26 +200,13 @@ Write-Mask $b @(
     '.gyyyyg.',
     '..gggg..') @{ g = '#8C6420'; y = '#F2C04E'; k = '#241A36'; r = '#E07CFF'; h = '#FFE6FF' } 0 0
 Save-Tex $b $blockDir 'rune_table_plaque'
-# floating crystal: light blue at the top (v 0) through blue and indigo to violet at the bottom, lighter on the left of
-# each face, deeper on the right, a bright edge column and a little pixel noise
-$b = New-Tex
-$stops = @(@(0, 150, 220, 255), @(0.22, 56, 124, 244), @(0.42, 86, 62, 226), @(0.68, 138, 50, 224), @(1, 80, 22, 156))
-$nr = New-Object System.Random 3131
-for ($y = 0; $y -lt 16; $y++) {
-    $v = $y / 15; $k = 0; while ($v -gt $stops[$k + 1][0]) { $k++ }
-    $f = ($v - $stops[$k][0]) / ($stops[$k + 1][0] - $stops[$k][0])
-    for ($x = 0; $x -lt 16; $x++) {
-        $shade = 22 - 50 * $x / 15 + $nr.Next(-7, 8)
-        $c = 1..3 | ForEach-Object { [int][Math]::Max(0, [Math]::Min(255, $stops[$k][$_] + ($stops[$k + 1][$_] - $stops[$k][$_]) * $f + $shade)) }
-        if ($x -eq 0) { $c = $c | ForEach-Object { [int][Math]::Min(255, $_ + 45) } }
-        $b.SetPixel($x, $y, [System.Drawing.Color]::FromArgb(255, $c[0], $c[1], $c[2]))
-    }
-}
+# floating crystal: the user's 11x19 pink-violet gem sprite (tools/texgen/ref/floating_crystal.png) at (0,0) of a 32x32
+# sheet, so 1 sprite pixel = 0.5 model UV units
+$b = New-Tex 32 32
+$spr = New-Object System.Drawing.Bitmap (Join-Path $PSScriptRoot 'ref\floating_crystal.png')
+for ($y = 0; $y -lt $spr.Height; $y++) { for ($x = 0; $x -lt $spr.Width; $x++) { $b.SetPixel($x, $y, $spr.GetPixel($x, $y)) } }
+$spr.Dispose()
 Save-Tex $b $blockDir 'rune_table_fcrystal'
-# the rune on the crystal (5x5 overlay)
-$b = New-Tex
-Write-Mask $b @('..ww.', '.w...', '..ww.', '....w', '.www.') @{ w = '#F6E2FF' } 0 0
-Save-Tex $b $blockDir 'rune_table_fcrune'
 # crystal frame: (0,0) 9x4 long side (gold rims, two violet rune plates), (9,0) 1x4 end, (0,5) 7x4 short side (one
 # plate), (0..9, 9..15) plain gold, (11,0) 3x3 gem mount, (12,5) 2x2 gem
 $b = New-Tex

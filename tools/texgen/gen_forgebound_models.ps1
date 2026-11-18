@@ -149,47 +149,48 @@ Add-T @(10, 13, -0.15) @(22, 13.2, 1) @{ up = (Get-Face 'runner' @(0, 0, 12, 1.1
 Add-T @(10, 1.2, -0.15) @(22, 13.2, -0.15) @{ north = (Get-Face 'drape' @(0, 0, 12, 12)) } $soft
 Add-T @(11, 13.21, 2) @(21, 13.22, 12) @{ up = (Get-Face 'circle' @(0, 0, 10, 10)) } $glow
 
-# ---- the floating crystal (blocky, after the reference): a square-cut crystal - stepped point below, a narrow violet
-# lower section, a wider middle section carrying a glowing rune, a blue upper section and a stepped point on top - in a
-# square gold frame with violet rune plates and a gold-mounted gem on the front; small crystals float around it.
-# One texture shades light blue (top) to violet (bottom); each part takes the band of it matching its height.
+# ---- the floating crystal: the user's pink-violet gem sprite built as a solid crystal. Each sprite row is a slab as wide
+# as the row, its depth following the width (so it rounds out like a gem); the row's pixels go on the front and back,
+# the edge pixels' colours on the sides. Held in a gold frame with violet rune plates and a gem mount; small copies of
+# the same crystal float around it.
+Add-Type -AssemblyName System.Drawing
 $fcLight = ', "neoforge_data": {"block_light": 13, "sky_light": 15}'
-function Add-FBox([double[]]$from, [double[]]$to, [double]$yTop, [double]$yBot) {
-    $va = [Math]::Max(0, [Math]::Min(16, 16 * ($yTop - $to[1]) / ($yTop - $yBot)))
-    $vb = [Math]::Max(0, [Math]::Min(16, 16 * ($yTop - $from[1]) / ($yTop - $yBot)))
-    if ($vb - $va -lt 0.5) { $vb = [Math]::Min(16, $va + 0.5) }
-    $side = "`"uv`": [0, $(Format-N $va), 16, $(Format-N $vb)], `"texture`": `"#fcry`""
-    $cap = "`"uv`": [4, $(Format-N $va), 12, $(Format-N ([Math]::Min(16, $va + 1)))], `"texture`": `"#fcry`""
-    Add-T $from $to @{ north = $side; south = $side; east = $side; west = $side; up = $cap; down = $cap } $fcLight
+$spr = New-Object System.Drawing.Bitmap (Join-Path $PSScriptRoot 'ref\floating_crystal.png')
+$fcRows = @()
+for ($r = 0; $r -lt $spr.Height; $r++) {
+    $mn = -1; $mx = -1
+    for ($x = 0; $x -lt $spr.Width; $x++) { if ($spr.GetPixel($x, $r).A -gt 0) { if ($mn -lt 0) { $mn = $x }; $mx = $x } }
+    $fcRows += , @($mn, $mx)
 }
-# a square-cut crystal centred on (cx, cz): sections bottom-up as (half-width, height)
-function Add-FCrystal([double]$cx, [double]$y0, [double]$cz, [double[][]]$sections) {
-    $total = ($sections | ForEach-Object { $_[1] } | Measure-Object -Sum).Sum
-    $y = $y0
-    foreach ($s in $sections) {
-        Add-FBox @(($cx - $s[0]), $y, ($cz - $s[0])) @(($cx + $s[0]), ($y + $s[1]), ($cz + $s[0])) ($y0 + $total) $y0
-        $y += $s[1]
+$fcW = $spr.Width; $fcH = $spr.Height; $spr.Dispose()
+function Get-Uv([double]$u0, [double]$v0, [double]$u1, [double]$v1) { return "`"uv`": $(Format-V @(($u0 / 2), ($v0 / 2), ($u1 / 2), ($v1 / 2))), `"texture`": `"#fcry`"" }
+function Add-SpriteCrystal([double]$cx, [double]$yBot, [double]$cz, [double]$s) {
+    $yTop = $yBot + $fcH * $s
+    for ($r = 0; $r -lt $fcH; $r++) {
+        $mn = $fcRows[$r][0]; $mx = $fcRows[$r][1]; if ($mn -lt 0) { continue }
+        $w = $mx - $mn + 1; $d = [Math]::Max(1, $w * 0.4) * $s
+        $x0 = $cx + ($mn - $fcW / 2) * $s; $x1 = $cx + ($mx + 1 - $fcW / 2) * $s
+        $faces = @{
+            north = Get-Uv $mn $r ($mx + 1) ($r + 1); south = Get-Uv ($mx + 1) $r $mn ($r + 1)
+            west  = Get-Uv $mn $r ($mn + 1) ($r + 1); east = Get-Uv $mx $r ($mx + 1) ($r + 1)
+            up    = Get-Uv $mn $r ($mn + 1) ($r + 1); down = Get-Uv $mx $r ($mx + 1) ($r + 1)
+        }
+        Add-T @($x0, ($yTop - ($r + 1) * $s), ($cz - $d / 2)) @($x1, ($yTop - $r * $s), ($cz + $d / 2)) $faces $fcLight
     }
 }
-# the big crystal: point (3 steps), lower 4x4, middle 5x5, upper 4x4, point (3 steps)
-Add-FCrystal 16 13.6 7 @(@(0.5, 0.7), @(1, 0.7), @(1.5, 0.7), @(2, 2.4), @(2.5, 6), @(2, 2.6), @(1.5, 0.8), @(1, 0.7), @(0.5, 0.6))
-# the rune on the middle section above the frame, front and back (glows)
-$rune = '"uv": [0, 0, 5, 5], "texture": "#fcrune"'
-Add-T @(13.5, 19.9, 4.45) @(18.5, 24, 4.45) @{ north = $rune } $glow
-Add-T @(13.5, 19.9, 9.55) @(18.5, 24, 9.55) @{ south = $rune } $glow
-# the square gold frame hugging the crystal (outer 7x7, 3 high, inner faces left out) with violet rune plates, and a
-# gold mount with a gem on the front
-$fy = 16.9; $fh = 3
-$long = '"uv": [0, 0, 7, 3], "texture": "#band"'; $short = '"uv": [0, 5, 5, 8], "texture": "#band"'; $edge = '"uv": [9, 0, 10, 3], "texture": "#band"'; $rim = '"uv": [0, 10, 7, 11], "texture": "#band"'
-Add-T @(12.5, $fy, 3.5) @(19.5, ($fy + $fh), 4.5) @{ north = $long; east = $edge; west = $edge; up = $rim; down = $rim }
-Add-T @(12.5, $fy, 9.5) @(19.5, ($fy + $fh), 10.5) @{ south = $long; east = $edge; west = $edge; up = $rim; down = $rim }
-Add-T @(12.5, $fy, 4.5) @(13.5, ($fy + $fh), 9.5) @{ west = $short; up = '"uv": [0, 9, 1, 14], "texture": "#band"'; down = '"uv": [0, 9, 1, 14], "texture": "#band"' }
-Add-T @(18.5, $fy, 4.5) @(19.5, ($fy + $fh), 9.5) @{ east = $short; up = '"uv": [0, 9, 1, 14], "texture": "#band"'; down = '"uv": [0, 9, 1, 14], "texture": "#band"' }
-Add-T @(14.5, ($fy - 0.2), 3.1) @(17.5, ($fy + 3.2), 3.5) (Get-Plain 'band' 11 0 @(14.5, ($fy - 0.2), 3.1) @(17.5, ($fy + 3.2), 3.5))
-Add-T @(15.2, ($fy + 0.7), 2.8) @(16.8, ($fy + 2.3), 3.1) @{ north = '"uv": [12, 5, 14, 7], "texture": "#band"'; east = '"uv": [12, 5, 12.3, 7], "texture": "#band"'; west = '"uv": [12, 5, 12.3, 7], "texture": "#band"'; up = '"uv": [12, 5, 14, 5.3], "texture": "#band"'; down = '"uv": [12, 5, 14, 5.3], "texture": "#band"' } $glow
-# small floating crystals
-foreach ($c in @(@(10.2, 23.6, 4.2), @(21.8, 24, 4.6), @(9.8, 18.6, 9.4), @(22.2, 18.2, 9.8), @(11.6, 15.2, 2.6), @(20.4, 15.6, 2.8))) {
-    Add-FCrystal $c[0] $c[1] $c[2] @(@(0.3, 0.5), @(0.6, 1.8), @(0.3, 0.5))
+Add-SpriteCrystal 16 14 7 0.75
+# the gold frame round the crystal's middle (inner 8.4 x 5.4, 3 high, inner faces left out), rune plates, front gem
+$fy = 17.9; $fh = 2.4; $fx0 = 11; $fx1 = 21; $fz0 = 4.4; $fz1 = 9.6
+$long = '"uv": [0, 0, 7, 2.4], "texture": "#band"'; $short = '"uv": [0, 5, 5, 7.4], "texture": "#band"'; $edge = '"uv": [9, 0, 10, 2.4], "texture": "#band"'; $rim = '"uv": [0, 10, 7, 11], "texture": "#band"'; $rimS = '"uv": [0, 9, 1, 14], "texture": "#band"'
+Add-T @($fx0, $fy, $fz0) @($fx1, ($fy + $fh), ($fz0 + 0.8)) @{ north = $long; east = $edge; west = $edge; up = $rim; down = $rim }
+Add-T @($fx0, $fy, ($fz1 - 0.8)) @($fx1, ($fy + $fh), $fz1) @{ south = $long; east = $edge; west = $edge; up = $rim; down = $rim }
+Add-T @($fx0, $fy, ($fz0 + 0.8)) @(($fx0 + 0.8), ($fy + $fh), ($fz1 - 0.8)) @{ west = $short; up = $rimS; down = $rimS }
+Add-T @(($fx1 - 0.8), $fy, ($fz0 + 0.8)) @($fx1, ($fy + $fh), ($fz1 - 0.8)) @{ east = $short; up = $rimS; down = $rimS }
+Add-T @(14.6, ($fy - 0.3), ($fz0 - 0.4)) @(17.4, ($fy + 2.7), $fz0) (Get-Plain 'band' 11 0 @(14.6, ($fy - 0.3), ($fz0 - 0.4)) @(17.4, ($fy + 2.7), $fz0))
+Add-T @(15.2, ($fy + 0.4), ($fz0 - 0.7)) @(16.8, ($fy + 2), ($fz0 - 0.4)) @{ north = '"uv": [12, 5, 14, 7], "texture": "#band"'; east = '"uv": [12, 5, 12.3, 7], "texture": "#band"'; west = '"uv": [12, 5, 12.3, 7], "texture": "#band"'; up = '"uv": [12, 5, 14, 5.3], "texture": "#band"'; down = '"uv": [12, 5, 14, 5.3], "texture": "#band"' } $glow
+# small floating crystals (the same gem, small)
+foreach ($c in @(@(9.8, 22.4, 4.6), @(22.2, 23, 5), @(9.4, 17.4, 9.4), @(22.6, 17, 9.8), @(11.2, 14.4, 2.8), @(20.8, 14.8, 3))) {
+    Add-SpriteCrystal $c[0] $c[1] $c[2] 0.2
 }
 
 # ---- back: rune pillars, beam, crown, plaque, lanterns
@@ -264,7 +265,6 @@ $tableTex = @"
     "glow": "forgebound:block/rune_table_glow",
     "plaque": "forgebound:block/rune_table_plaque",
     "fcry": "forgebound:block/rune_table_fcrystal",
-    "fcrune": "forgebound:block/rune_table_fcrune",
     "band": "forgebound:block/rune_table_band",
     "crystal": "forgebound:block/rune_table_crystal",
     "lantern": "forgebound:block/rune_table_lantern",
