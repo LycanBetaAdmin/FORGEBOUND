@@ -152,7 +152,7 @@ public final class TooltipFrame {
         for (Either<FormattedText, TooltipComponent> e : in) width = Math.max(width, e.left().map(font::width).orElse(0));
         for (Enhancement x : Enhancements.get(stack)) width = Math.max(width, font.width(x.line()) + 18);
         for (UniqueAttribute a : Uniques.get(stack)) width = Math.max(width, font.width(a.description(tier.level())) + 24);
-        width = Math.min(width, 400);
+        width = Math.min(width, MAX_WIDTH);
 
         List<Either<FormattedText, TooltipComponent>> out = new ArrayList<>();
         out.add(in.get(0)); // the name
@@ -183,9 +183,19 @@ public final class TooltipFrame {
             out.add(Either.left(Component.translatable("tooltip.forgebound.durability",
                     String.format(Locale.ROOT, "%,d", left), String.format(Locale.ROOT, "%,d", max)).withColor(IVORY)));
         }
+        // long lines (item descriptions, ability text) wrap so the frame never grows past MAX_WIDTH
         in.clear();
-        in.addAll(out);
+        for (Either<FormattedText, TooltipComponent> e : out) {
+            if (e.left().isPresent() && font.width(e.left().get()) > MAX_WIDTH) {
+                for (FormattedText part : font.getSplitter().splitLines(e.left().get(), MAX_WIDTH, net.minecraft.network.chat.Style.EMPTY)) in.add(Either.left(part));
+            } else {
+                in.add(e);
+            }
+        }
     }
+
+    /** The widest a FORGEBOUND gear tooltip gets (GUI pixels); longer text lines wrap. */
+    private static final int MAX_WIDTH = 390;
 
     // ------------------------------------------------------------------ the frame
 

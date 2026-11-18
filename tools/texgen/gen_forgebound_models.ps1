@@ -220,13 +220,13 @@ foreach ($lx in @(8, 24)) {
 Add-TPlain 'gold' 2 2 @(3, 13, 3) @(8, 13.6, 8) '' @('north', 'south', 'east', 'west', 'up')
 Add-TPlain 'gold' 2 2 @(5, 13.6, 5) @(6, 16, 6) '' @('north', 'south', 'east', 'west')
 $tilt = Get-TRot 'x' -22.5 @(5.5, 16, 5.5)
-Add-TPlain 'gold' 2 2 @(1.5, 16, 1.5) @(9.5, 16.4, 9.5) $tilt
-Add-TPlain 'book' 8 0 @(1.8, 16.4, 1.8) @(9.2, 16.8, 9.2) $tilt @('north', 'south', 'east', 'west', 'up')
-$pg = Get-Plain 'pages' 0 6 @(2.1, 16.8, 2.1) @(5.5, 17.5, 8.9) @('north', 'south', 'west'); $pg['up'] = (Get-Face 'pages' @(0, 0, 3, 6))
-Add-T @(2.1, 16.8, 2.1) @(5.5, 17.5, 8.9) $pg $tilt
-$pg = Get-Plain 'pages' 0 6 @(5.5, 16.8, 2.1) @(8.9, 17.5, 8.9) @('north', 'south', 'east'); $pg['up'] = (Get-Face 'pages' @(3, 0, 6, 6))
-Add-T @(5.5, 16.8, 2.1) @(8.9, 17.5, 8.9) $pg ($tilt + $soft)
-Add-TPlain 'book' 8 8 @(7.4, 15, 1.95) @(7.9, 17.52, 2.15) $tilt @('north', 'east', 'west', 'up')
+Add-TPlain 'gold' 2 2 @(1, 16, 1) @(10, 16.4, 10) $tilt
+Add-TPlain 'book' 8 0 @(1.3, 16.4, 1.3) @(9.7, 16.8, 9.7) $tilt @('north', 'south', 'east', 'west', 'up')
+$pg = Get-Plain 'pages' 0 6 @(1.6, 16.8, 1.6) @(5.5, 17.5, 9.4) @('north', 'south', 'west'); $pg['up'] = (Get-Face 'pages' @(0, 0, 3, 6))
+Add-T @(1.6, 16.8, 1.6) @(5.5, 17.5, 9.4) $pg $tilt
+$pg = Get-Plain 'pages' 0 6 @(5.5, 16.8, 1.6) @(9.4, 17.5, 9.4) @('north', 'south', 'east'); $pg['up'] = (Get-Face 'pages' @(3, 0, 6, 6))
+Add-T @(5.5, 16.8, 1.6) @(9.4, 17.5, 9.4) $pg ($tilt + $soft)
+Add-TPlain 'book' 8 8 @(7.6, 14.9, 1.45) @(8.1, 17.52, 1.65) $tilt @('north', 'east', 'west', 'up')
 
 # a closed book lying flat, spine to the west: covers, page block and a banded spine
 function Add-TBook([double]$x, [double]$y, [double]$z, [double]$w, [double]$d, [double[]]$cover, [double[]]$plain, [double[]]$spine, [string]$rot = '') {
