@@ -200,34 +200,36 @@ Write-Mask $b @(
     '.gyyyyg.',
     '..gggg..') @{ g = '#8C6420'; y = '#F2C04E'; k = '#241A36'; r = '#E07CFF'; h = '#FFE6FF' } 0 0
 Save-Tex $b $blockDir 'rune_table_plaque'
-# crystal (floating crystal and shards): blue at the top (v 0) shading to violet at the bottom, light on the left of each
-# face and deep on the right, a bright edge line and a soft facet line
+# floating crystal: light blue at the top (v 0) through blue and indigo to violet at the bottom, lighter on the left of
+# each face, deeper on the right, a bright edge column and a little pixel noise
 $b = New-Tex
-$top = @(@(196, 236, 255), @(96, 170, 255), @(48, 96, 230))
-$bot = @(@(232, 196, 255), @(170, 96, 245), @(98, 36, 184))
+$stops = @(@(0, 150, 220, 255), @(0.22, 56, 124, 244), @(0.42, 86, 62, 226), @(0.68, 138, 50, 224), @(1, 80, 22, 156))
+$nr = New-Object System.Random 3131
 for ($y = 0; $y -lt 16; $y++) {
-    $v = $y / 15
+    $v = $y / 15; $k = 0; while ($v -gt $stops[$k + 1][0]) { $k++ }
+    $f = ($v - $stops[$k][0]) / ($stops[$k + 1][0] - $stops[$k][0])
     for ($x = 0; $x -lt 16; $x++) {
-        $u = $x / 15
-        $c = 0..2 | ForEach-Object {
-            $i = $_
-            $l = $top[0][$i] + ($bot[0][$i] - $top[0][$i]) * $v; $m = $top[1][$i] + ($bot[1][$i] - $top[1][$i]) * $v; $d = $top[2][$i] + ($bot[2][$i] - $top[2][$i]) * $v
-            $val = if ($u -lt 0.5) { $l + ($m - $l) * ($u / 0.5) } else { $m + ($d - $m) * (($u - 0.5) / 0.5) }
-            [int][Math]::Max(0, [Math]::Min(255, $val))
-        }
-        if ($x -eq 1) { $c = @(250, 250, 255) } elseif ($x -eq 9) { $c = $c | ForEach-Object { [int][Math]::Min(255, $_ + 34) } }
+        $shade = 22 - 50 * $x / 15 + $nr.Next(-7, 8)
+        $c = 1..3 | ForEach-Object { [int][Math]::Max(0, [Math]::Min(255, $stops[$k][$_] + ($stops[$k + 1][$_] - $stops[$k][$_]) * $f + $shade)) }
+        if ($x -eq 0) { $c = $c | ForEach-Object { [int][Math]::Min(255, $_ + 45) } }
         $b.SetPixel($x, $y, [System.Drawing.Color]::FromArgb(255, $c[0], $c[1], $c[2]))
     }
 }
-Save-Tex $b $blockDir 'rune_table_gem'
-# crystal band: rows 0..2 the outer face (light gold rim, violet rune plates between gold studs, dark gold rim),
-# rows 4..7 plain gold for the band's edges
+Save-Tex $b $blockDir 'rune_table_fcrystal'
+# the rune on the crystal (5x5 overlay)
 $b = New-Tex
-for ($x = 0; $x -lt 16; $x++) {
-    Set-Px $b $x 0 '#F2C04E'; Set-Px $b $x 2 '#B8862B'
-    Set-Px $b $x 1 ($(switch ($x % 4) { 0 { '#E0A33A' } 1 { '#4A1690' } 2 { '#E07CFF' } 3 { '#4A1690' } }))
-    for ($y = 4; $y -lt 8; $y++) { Set-Px $b $x $y ($(if ($y -eq 4) { '#F2C04E' } else { '#D99A2E' })) }
-}
+Write-Mask $b @('..ww.', '.w...', '..ww.', '....w', '.www.') @{ w = '#F6E2FF' } 0 0
+Save-Tex $b $blockDir 'rune_table_fcrune'
+# crystal frame: (0,0) 9x4 long side (gold rims, two violet rune plates), (9,0) 1x4 end, (0,5) 7x4 short side (one
+# plate), (0..9, 9..15) plain gold, (11,0) 3x3 gem mount, (12,5) 2x2 gem
+$b = New-Tex
+$gp = @{ y = '#F2C04E'; o = '#D99A2E'; d = '#9C6E22'; v = '#4A1690'; w = '#E8B8FF' }
+Write-Mask $b @('yyyyyyy', 'ovwvwvo', 'ddddddd') $gp 0 0
+Write-Mask $b @('y', 'o', 'd') $gp 9 0
+Write-Mask $b @('yyyyy', 'ovwvo', 'ddddd') $gp 0 5
+for ($y = 9; $y -lt 16; $y++) { for ($x = 0; $x -lt 10; $x++) { Set-Px $b $x $y ($(if ((($x + $y) % 3) -eq 0) { '#E8B444' } else { '#F2C04E' })) } }
+Write-Mask $b @('yyo', 'yoo', 'ood') $gp 11 0
+Write-Mask $b @('ab', 'cd') @{ a = '#F0A8FF'; b = '#C46CFF'; c = '#9A40F0'; d = '#5A1AA8' } 12 5
 Save-Tex $b $blockDir 'rune_table_band'
 # books: (0,0) 4x5 violet cover, (4,0) 3x4 crimson cover, (0,6) 5x2 violet spine, (0,9) 4x2 crimson spine,
 # (8..15, 0..7) violet leather, (8..15, 8..13) crimson leather, row 15 page edges
