@@ -178,16 +178,17 @@ function Add-SpriteCrystal([double]$cx, [double]$yBot, [double]$cz, [double]$s) 
         Add-T @($x0, ($yTop - ($r + 1) * $s), ($cz - $d / 2)) @($x1, ($yTop - $r * $s), ($cz + $d / 2)) $faces $fcLight
     }
 }
-Add-SpriteCrystal 16 14 7 0.75
-# the gold frame round the crystal's middle (inner 8.4 x 5.4, 3 high, inner faces left out), rune plates, front gem
-$fy = 17.9; $fh = 2.4; $fx0 = 11; $fx1 = 21; $fz0 = 4.4; $fz1 = 9.6
-$long = '"uv": [0, 0, 7, 2.4], "texture": "#band"'; $short = '"uv": [0, 5, 5, 7.4], "texture": "#band"'; $edge = '"uv": [9, 0, 10, 2.4], "texture": "#band"'; $rim = '"uv": [0, 10, 7, 11], "texture": "#band"'; $rimS = '"uv": [0, 9, 1, 14], "texture": "#band"'
-Add-T @($fx0, $fy, $fz0) @($fx1, ($fy + $fh), ($fz0 + 0.8)) @{ north = $long; east = $edge; west = $edge; up = $rim; down = $rim }
-Add-T @($fx0, $fy, ($fz1 - 0.8)) @($fx1, ($fy + $fh), $fz1) @{ south = $long; east = $edge; west = $edge; up = $rim; down = $rim }
-Add-T @($fx0, $fy, ($fz0 + 0.8)) @(($fx0 + 0.8), ($fy + $fh), ($fz1 - 0.8)) @{ west = $short; up = $rimS; down = $rimS }
-Add-T @(($fx1 - 0.8), $fy, ($fz0 + 0.8)) @($fx1, ($fy + $fh), ($fz1 - 0.8)) @{ east = $short; up = $rimS; down = $rimS }
-Add-T @(14.6, ($fy - 0.3), ($fz0 - 0.4)) @(17.4, ($fy + 2.7), $fz0) (Get-Plain 'band' 11 0 @(14.6, ($fy - 0.3), ($fz0 - 0.4)) @(17.4, ($fy + 2.7), $fz0))
-Add-T @(15.2, ($fy + 0.4), ($fz0 - 0.7)) @(16.8, ($fy + 2), ($fz0 - 0.4)) @{ north = '"uv": [12, 5, 14, 7], "texture": "#band"'; east = '"uv": [12, 5, 12.3, 7], "texture": "#band"'; west = '"uv": [12, 5, 12.3, 7], "texture": "#band"'; up = '"uv": [12, 5, 14, 5.3], "texture": "#band"'; down = '"uv": [12, 5, 14, 5.3], "texture": "#band"' } $glow
+Add-SpriteCrystal 16 15 7 0.5
+# the gold frame round the crystal's middle: a thin band (1.2 high, 0.4 thick, inner faces left out) showing a line
+# of violet rune plates, with a small gold mount and gem on the front
+$fy = 18.6; $fh = 1.2; $ft = 0.4; $fx0 = 12.8; $fx1 = 19.2; $fz0 = 5.4; $fz1 = 8.6
+$long = '"uv": [0, 0.5, 6.4, 1.7], "texture": "#band"'; $short = '"uv": [1, 5.5, 3.4, 6.7], "texture": "#band"'; $edge = '"uv": [9, 0.5, 9.4, 1.7], "texture": "#band"'; $rim = '"uv": [0, 10, 6.4, 10.4], "texture": "#band"'; $rimS = '"uv": [0, 9, 0.4, 11.4], "texture": "#band"'
+Add-T @($fx0, $fy, $fz0) @($fx1, ($fy + $fh), ($fz0 + $ft)) @{ north = $long; east = $edge; west = $edge; up = $rim; down = $rim }
+Add-T @($fx0, $fy, ($fz1 - $ft)) @($fx1, ($fy + $fh), $fz1) @{ south = $long; east = $edge; west = $edge; up = $rim; down = $rim }
+Add-T @($fx0, $fy, ($fz0 + $ft)) @(($fx0 + $ft), ($fy + $fh), ($fz1 - $ft)) @{ west = $short; up = $rimS; down = $rimS }
+Add-T @(($fx1 - $ft), $fy, ($fz0 + $ft)) @($fx1, ($fy + $fh), ($fz1 - $ft)) @{ east = $short; up = $rimS; down = $rimS }
+Add-T @(15.2, ($fy - 0.3), ($fz0 - 0.3)) @(16.8, ($fy + 1.5), $fz0) (Get-Plain 'band' 11 0 @(15.2, ($fy - 0.3), ($fz0 - 0.3)) @(16.8, ($fy + 1.5), $fz0))
+Add-T @(15.5, ($fy + 0.1), ($fz0 - 0.5)) @(16.5, ($fy + 1.1), ($fz0 - 0.3)) @{ north = '"uv": [12, 5, 14, 7], "texture": "#band"'; east = '"uv": [12, 5, 12.2, 7], "texture": "#band"'; west = '"uv": [12, 5, 12.2, 7], "texture": "#band"'; up = '"uv": [12, 5, 14, 5.2], "texture": "#band"'; down = '"uv": [12, 5, 14, 5.2], "texture": "#band"' } $glow
 # small floating crystals (the same gem, small)
 foreach ($c in @(@(9.8, 22.4, 4.6), @(22.2, 23, 5), @(9.4, 17.4, 9.4), @(22.6, 17, 9.8), @(11.2, 14.4, 2.8), @(20.8, 14.8, 3))) {
     Add-SpriteCrystal $c[0] $c[1] $c[2] 0.2
