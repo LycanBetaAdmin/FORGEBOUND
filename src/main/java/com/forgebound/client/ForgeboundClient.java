@@ -24,6 +24,8 @@ public final class ForgeboundClient {
         public static void onScreens(RegisterMenuScreensEvent event) {
             event.register(ModContent.FORGE_ANVIL_MENU.get(), ForgeAnvilScreen::new);
             event.register(ModContent.REROLL_MENU.get(), RerollScreen::new);
+            event.register(ModContent.ENGRAVE_MENU.get(), EngraveScreen::new);
+            event.register(ModContent.TRANSFER_MENU.get(), TransferScreen::new);
         }
     }
 
@@ -45,6 +47,11 @@ public final class ForgeboundClient {
                     lines.add(at++, Component.literal(" ").append(a.displayName()));
                     lines.add(at++, Component.literal("   ").append(a.description(tier.level())));
                 }
+            }
+            var enh = com.forgebound.enhance.Enhancements.get(stack);
+            if (!enh.isEmpty()) {
+                lines.add(at++, Component.translatable("tooltip.forgebound.enhancements", enh.size(), com.forgebound.enhance.Enhancements.slots(tier)).withColor(0x55AAFF));
+                for (var e : enh) lines.add(at++, Component.literal(" ").append(e.line()));
             }
         }
     }

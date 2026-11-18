@@ -25,11 +25,13 @@ public final class Forgebound {
         ForgeboundConfig.load();
         Tiers.register(modBus);
         com.forgebound.unique.Uniques.register(modBus);
+        com.forgebound.enhance.Enhancements.register(modBus);
         LegacyTiers.register(modBus);
         ModContent.register(modBus);
         NeoForge.EVENT_BUS.register(TierEffects.class);
         NeoForge.EVENT_BUS.register(ModContent.class);
         NeoForge.EVENT_BUS.register(com.forgebound.unique.UniqueEffects.class);
+        NeoForge.EVENT_BUS.register(com.forgebound.enhance.Enhancements.class);
     }
 
     public static ResourceLocation id(String path) {

@@ -230,7 +230,10 @@ public class ForgeAnvilScreen extends AbstractContainerScreen<ForgeAnvilMenu> {
     }
 
     static void drawTabs(GuiGraphics g, int left, int top, int active, int mx, int my) {
-        ItemStack[] icons = {new ItemStack(ModContent.FORGE_ANVIL_ITEM.get()), new ItemStack(ModContent.FORTUNE_DICE.get())};
+        drawTabs(g, left, top, active, mx, my, new ItemStack[]{new ItemStack(ModContent.FORGE_ANVIL_ITEM.get()), new ItemStack(ModContent.FORTUNE_DICE.get())});
+    }
+
+    static void drawTabs(GuiGraphics g, int left, int top, int active, int mx, int my, ItemStack[] icons) {
         for (int i = 0; i < 2; i++) {
             int x = left - TAB_W + 2, y = top + 18 + i * (TAB_H + 3);
             boolean on = i == active, hover = tabAt(mx, my, left, top) == i;

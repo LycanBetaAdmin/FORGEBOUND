@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": {"model": "forgebound:block/rune_engraving_table"},
+    "facing=east": {"model": "forgebound:block/rune_engraving_table", "y": 90},
+    "facing=south": {"model": "forgebound:block/rune_engraving_table", "y": 180},
+    "facing=west": {"model": "forgebound:block/rune_engraving_table", "y": 270}
+  }
+}

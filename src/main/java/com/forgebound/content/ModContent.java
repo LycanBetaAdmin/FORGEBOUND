@@ -111,6 +111,16 @@ public final class ModContent {
     public static final DeferredHolder<MenuType<?>, MenuType<com.forgebound.anvil.RerollMenu>> REROLL_MENU =
             MENUS.register("forge_anvil_reroll", () -> new MenuType<>(com.forgebound.anvil.RerollMenu::new, FeatureFlags.VANILLA_SET));
 
+    // ---- Rune Engraving Table (phase 3)
+    public static final DeferredBlock<com.forgebound.enhance.RuneTableBlock> RUNE_TABLE = BLOCKS.register("rune_engraving_table",
+            () -> new com.forgebound.enhance.RuneTableBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).strength(3.0F, 1200.0F)
+                    .requiresCorrectToolForDrops().sound(SoundType.WOOD).lightLevel(s -> 7).noOcclusion()));
+    public static final DeferredItem<BlockItem> RUNE_TABLE_ITEM = ITEMS.registerSimpleBlockItem(RUNE_TABLE);
+    public static final DeferredHolder<MenuType<?>, MenuType<com.forgebound.enhance.EngraveMenu>> ENGRAVE_MENU =
+            MENUS.register("rune_engraving_table", () -> new MenuType<>(com.forgebound.enhance.EngraveMenu::new, FeatureFlags.VANILLA_SET));
+    public static final DeferredHolder<MenuType<?>, MenuType<com.forgebound.enhance.TransferMenu>> TRANSFER_MENU =
+            MENUS.register("rune_engraving_table_transfer", () -> new MenuType<>(com.forgebound.enhance.TransferMenu::new, FeatureFlags.VANILLA_SET));
+
     public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<ChestTierModifier>> CHEST_TIERS =
             LOOT_MODIFIERS.register("chest_tiers", () -> ChestTierModifier.CODEC);
 
@@ -119,6 +129,7 @@ public final class ModContent {
             .icon(() -> new ItemStack(FORGE_ANVIL_ITEM.get()))
             .displayItems((params, out) -> {
                 out.accept(FORGE_ANVIL_ITEM.get());
+                out.accept(RUNE_TABLE_ITEM.get());
                 for (Supplier<? extends ItemLike> s : List.<Supplier<? extends ItemLike>>of(VERDANTITE_ORE, DEEPSLATE_VERDANTITE_ORE, INFERNALITE_ORE, VOIDSTEEL_ORE,
                         RAW_VERDANTITE, VERDANTITE_INGOT, RAW_INFERNALITE, INFERNALITE_INGOT, RAW_VOIDSTEEL, VOIDSTEEL_INGOT,
                         ARCANE_SHARD, CRYSTAL_DUST, ASCENSION_CORE, FORTUNE_DICE, SOUL_ESSENCE, FORTUNE_CRYSTAL, SEALING_RUNE)) {

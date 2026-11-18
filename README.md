@@ -36,8 +36,17 @@ Forge Anvil with dimensional metals and reforge materials.
 - **Materials**: Fortune Dice (crafted: gold, bones, Arcane Shard), Soul Essence (hostile mobs, 2% + Looting; bosses 4-8),
   Fortune Crystal (bosses, 35%), Sealing Rune (stronghold library, ancient city, End City, bastion, mansion, ominous vaults).
 
+## Phase 3
+- **Rune Engraving Table** (crafted: Arcane Shards, book, amethyst blocks, enchanting table, obsidian).
+- **Enhance tab**: chosen bonuses (`forgebound:enhancements`). Slots by tier: 1 / 2 / 2 / 3 / 3 / 4 / 4. Engraving costs
+  2 Arcane Shards per tier + (2 + tier) XP levels; removing costs half the shards, no refund. Melee: attack damage, attack
+  speed, crit rate, crit damage, life steal, fire damage, armor pierce. Ranged: arrow damage, draw speed, crit. Armor:
+  armor, toughness, max health, knockback resistance, speed, dodge, healing received. Tools: mining speed, luck, reach,
+  experience. Apothic Attributes ones only appear when that mod is installed.
+- **Transfer tab**: moves every enhancement to another item of the same kind (free slots needed); 2 Arcane Shards and
+  2 Crystal Dust per enhancement; the source loses them.
+
 ## Planned
-3. Rune Engraving Table: enhancements and transfer
 4. Disassembly Forge (the Ruinforged Crucible)
 5. Apotheosis integration and the custom tooltip frame
 

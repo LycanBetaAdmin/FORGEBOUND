@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": ["SBS", "AEA", "OOO"],
+  "key": {
+    "S": {"item": "forgebound:arcane_shard"},
+    "B": {"item": "minecraft:book"},
+    "A": {"item": "minecraft:amethyst_block"},
+    "E": {"item": "minecraft:enchanting_table"},
+    "O": {"item": "minecraft:obsidian"}
+  },
+  "result": {"id": "forgebound:rune_engraving_table", "count": 1}
+}

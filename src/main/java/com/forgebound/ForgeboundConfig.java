@@ -103,6 +103,26 @@ public final class ForgeboundConfig {
     @SerializedName("second_chance_cooldown_seconds")
     public int secondChanceCooldown = 600;
 
+    // ---- Enhancements (phase 3)
+
+    /** How many enhancements an item holds, T1..T7. */
+    @SerializedName("enhancement_slots")
+    public int[] enhancementSlots = {1, 2, 2, 3, 3, 4, 4};
+
+    /** Engraving costs this many Arcane Shards per tier of the item, plus enhance_levels_base + tier XP levels. Removing costs half the shards. */
+    @SerializedName("enhance_shards_per_tier")
+    public int enhanceShardsPerTier = 2;
+
+    @SerializedName("enhance_levels_base")
+    public int enhanceLevelsBase = 2;
+
+    /** Transfer cost per enhancement moved. */
+    @SerializedName("transfer_shards_per_enhancement")
+    public int transferShards = 2;
+
+    @SerializedName("transfer_dust_per_enhancement")
+    public int transferDust = 2;
+
     public int rerollDice(int tier) {
         return (int) at(toDouble(rerollDice), tier, 1);
     }
@@ -175,6 +195,7 @@ public final class ForgeboundConfig {
         if (read.poolWeights == null || read.poolWeights.length < 3) read.poolWeights = d.poolWeights;
         if (read.uniqueScalePerTier < 0) read.uniqueScalePerTier = d.uniqueScalePerTier;
         if (read.secondChanceCooldown <= 0) read.secondChanceCooldown = d.secondChanceCooldown;
+        if (read.enhancementSlots == null || read.enhancementSlots.length < 7) read.enhancementSlots = d.enhancementSlots;
         return read;
     }
 }
