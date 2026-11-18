@@ -83,62 +83,26 @@ Out-Model 'models\block\forge_anvil.json' @"
 "@ $e
 "anvil: $($e.Count) elements"
 
-# =====================================================================  Rune Engraving Table (front = north)
-# A stone altar: gold-banded desk with a purple runner and a glowing magic circle, two rune banners down the front, a
-# gold-set gem and glowing windows; behind it two rune pillars hold a stepped arch with a plaque, a crystal hanging in a
-# gold ring on chains and a violet lantern each side. Books on the left, crystals and potions on the right.
-$e = New-Object System.Collections.Generic.List[string]
-$plinth = Get-All 'stone'; $plinth['down'] = '"texture": "#stone", "cullface": "down"'
-$e.Add((New-Elem @(0, 0, 0.5) @(16, 1.5, 15.5) $plinth))                                  # plinth
-$e.Add((New-Elem @(1, 1.5, 1.5) @(15, 9.5, 14.5) (Get-All 'dark')))                       # recessed body
-foreach ($c in @(@(0, 0.5), @(13, 0.5), @(0, 12.5), @(13, 12.5))) {                         # corner posts
-    $e.Add((New-Elem @($c[0], 1.5, $c[1]) @(($c[0] + 3), 9.5, ($c[1] + 3)) (Get-All 'stone')))
+# =====================================================================  Rune Engraving Table (two blocks, front = north)
+# Authored in table space: X 0..32 across both blocks (X 32 is the viewer's left), Z 0 = front. The main block is
+# X 16..32; the side block (X 0..16) is the placer's right and has an empty model. 1 unit = 1 texel throughout.
+# A violet stone altar on a plinth: corner posts, gold bands, arched glowing windows, a runner with a draped front
+# cloth and a magic circle under a large floating amethyst in a gold ring; behind it two rune pillars carry a beam with
+# a crown and a rune plaque, with a lantern hanging each side. On the desk: a gold book stand with an open book (right),
+# tomes, candles, potions and an amethyst cluster (left).
+$script:OX = -16
+function Get-TRot([string]$axis, [double]$angle, [double[]]$o) { return Get-Rot $axis $angle @(($o[0] + $script:OX), $o[1], $o[2]) }
+function Add-T([double[]]$from, [double[]]$to, [hashtable]$faces, [string]$extra = '') {
+    $f = @(([Math]::Max(0.0, $from[0]) + $script:OX), $from[1], $from[2]); $t = @(([Math]::Min(32.0, $to[0]) + $script:OX), $to[1], $to[2])
+    $e.Add((New-Elem $f $t $faces $extra))
 }
-foreach ($wx in @(0.9, 13.9)) { $e.Add((New-Elem @($wx, 3, 0.45) @(($wx + 1.2), 7.5, 0.5) (Get-One 'north' 'window' $full) $glow)) }
-foreach ($wx in @(5.2, 9.3)) { $e.Add((New-Elem @($wx, 2.5, 1.45) @(($wx + 1.5), 5, 1.5) (Get-One 'north' 'window' $full) $glow)) }
-$e.Add((New-Elem @(14.95, 3, 5.5) @(15, 7.5, 10.5) (Get-One 'east' 'window' $full) $glow))
-$e.Add((New-Elem @(1, 3, 5.5) @(1.05, 7.5, 10.5) (Get-One 'west' 'window' $full) $glow))
-# gold: a band under the top, the post bases, the gem setting and its gem
-$e.Add((New-Elem @(-0.1, 9, 0.4) @(16.1, 9.6, 15.6) (Get-All 'gold' @('north', 'south', 'east', 'west'))))
-foreach ($c in @(@(-0.1, 0.4), @(12.9, 0.4), @(-0.1, 12.4), @(12.9, 12.4))) {
-    $e.Add((New-Elem @($c[0], 1.5, $c[1]) @(($c[0] + 3.2), 2.1, ($c[1] + 3.2)) (Get-All 'gold' @('north', 'south', 'east', 'west', 'up'))))
+# long parts are split at X 16 so automatic UVs stay 1:1 with the texture
+function Add-TSplit([double[]]$from, [double[]]$to, [string]$tex, [string[]]$only = $sides) {
+    if ($from[0] -lt 16 -and $to[0] -gt 16) {
+        Add-T $from @(16, $to[1], $to[2]) (Get-All $tex ($only | Where-Object { $_ -ne 'east' }))
+        Add-T @(16, $from[1], $from[2]) $to (Get-All $tex ($only | Where-Object { $_ -ne 'west' }))
+    } else { Add-T $from $to (Get-All $tex $only) }
 }
-$e.Add((New-Elem @(7, 5.6, 1.2) @(9, 7.6, 1.5) (Get-All 'gold' @('north', 'up', 'down', 'east', 'west')) (Get-Rot 'z' 45 @(8, 6.6, 1.35))))
-$e.Add((New-Elem @(7.4, 6, 1.1) @(8.6, 7.2, 1.2) (Get-One 'north' 'gem' $full) ((Get-Rot 'z' 45 @(8, 6.6, 1.15)) + $glow)))
-# the top, its gold corner caps, the runner and the magic circle
-$e.Add((New-Elem @(-0.5, 9.6, 0) @(16.5, 11.6, 16) (Get-All 'stone')))
-foreach ($c in @(@(-0.6, -0.1), @(13.1, -0.1), @(-0.6, 12.6), @(13.1, 12.6))) {
-    $e.Add((New-Elem @($c[0], 11.5, $c[1]) @(($c[0] + 3.5), 11.9, ($c[1] + 3.5)) (Get-All 'gold' @('north', 'south', 'east', 'west', 'up'))))
-}
-$runSide = '"uv": [12, 0, 16, 0.2], "texture": "#runner"'
-$e.Add((New-Elem @(2, 11.6, 0.8) @(14, 11.8, 13.2) @{ up = '"uv": [0, 0, 12, 12.4], "texture": "#runner"'; north = $runSide; east = $runSide; west = $runSide }))
-$e.Add((New-Elem @(3, 11.81, 3) @(13, 11.82, 13) (Get-One 'up' 'circle' '"uv": [0, 0, 10, 10], ') $glow))
-# two banners over the front edge, their runes glowing
-foreach ($bx in @(2.4, 9.6)) {
-    $e.Add((New-Elem @($bx, 3.2, -0.15) @(($bx + 4), 11.8, -0.1) (Get-One 'north' 'banner' $full) ', "shade": false, "neoforge_data": {"block_light": 11, "sky_light": 15}'))
-    $e.Add((New-Elem @($bx, 11.6, -0.15) @(($bx + 4), 11.8, 0.6) (Get-One 'up' 'banner' '"uv": [1, 0, 15, 2], ')))
-}
-# back pillars: gold base and cap, one tall glowing window each
-foreach ($x in @(0.5, 12.5)) {
-    $e.Add((New-Elem @($x, 11.6, 12.5) @(($x + 3), 23, 15.5) (Get-All 'stone')))
-    $e.Add((New-Elem @(($x - 0.2), 11.6, 12.3) @(($x + 3.2), 12.6, 15.7) (Get-All 'gold' @('north', 'south', 'east', 'west', 'up'))))
-    $e.Add((New-Elem @(($x - 0.3), 23, 12.2) @(($x + 3.3), 24.3, 15.8) (Get-All 'gold')))
-    $e.Add((New-Elem @(($x + 0.8), 14.1, 12.45) @(($x + 2.2), 22, 12.5) (Get-One 'north' 'window' $full) $glow))
-}
-# the stepped arch with the rune plaque in front
-$e.Add((New-Elem @(3.5, 21.5, 13) @(12.5, 23, 15) (Get-All 'stone')))
-$e.Add((New-Elem @(5, 23, 13.2) @(11, 24, 14.8) (Get-All 'stone')))
-$e.Add((New-Elem @(3.4, 21.3, 12.9) @(12.6, 21.7, 15.1) (Get-All 'gold' @('north', 'south', 'down'))))
-$e.Add((New-Elem @(6, 21.7, 12.6) @(10, 25.7, 12.9) (Get-All 'gold' @('south', 'east', 'west', 'up', 'down'))))
-$e.Add((New-Elem @(6, 21.7, 12.55) @(10, 25.7, 12.6) (Get-One 'north' 'plaque' $full) $glow))
-# amethyst: crossed planes like vanilla amethyst clusters (sprite size = plane size, so pixels match the table's)
-function Add-Cross([double]$cx, [double]$y0, [double]$cz, [double]$w, [double]$h, [string]$uv, [string]$tex, [string]$extra = '') {
-    $f = "`"uv`": $uv, `"texture`": `"#$tex`""
-    foreach ($a in @(45, -45)) {
-        $e.Add((New-Elem @(($cx - $w / 2), $y0, $cz) @(($cx + $w / 2), ($y0 + $h), $cz) @{ north = $f; south = $f } ((Get-Rot 'y' $a @($cx, $y0, $cz)) + $extra)))
-    }
-}
-# a uniform patch of a texture on every face, sized to each face (for trims, covers, glass)
 function Get-Plain([string]$tex, [double]$u, [double]$v, [double[]]$from, [double[]]$to, [string[]]$only = $sides) {
     $dx = $to[0] - $from[0]; $dy = $to[1] - $from[1]; $dz = $to[2] - $from[2]; $h = @{}
     foreach ($s in $only) {
@@ -147,72 +111,127 @@ function Get-Plain([string]$tex, [double]$u, [double]$v, [double[]]$from, [doubl
     }
     return $h
 }
-function Add-Plain([string]$tex, [double]$u, [double]$v, [double[]]$from, [double[]]$to, [string]$extra = '', [string[]]$only = $sides) {
-    $e.Add((New-Elem $from $to (Get-Plain $tex $u $v $from $to $only) $extra))
+function Add-TPlain([string]$tex, [double]$u, [double]$v, [double[]]$from, [double[]]$to, [string]$extra = '', [string[]]$only = $sides) {
+    Add-T $from $to (Get-Plain $tex $u $v $from $to $only) $extra
 }
-# the floating amethyst cluster over the magic circle, held in a gold ring
-Add-Cross 8 13.2 8 9 9 '[0, 0, 9, 9]' 'crystal' $glow
-foreach ($r in @(@(5, 11, 5, 5.5), @(5, 11, 10.5, 11), @(5, 5.5, 5.5, 10.5), @(10.5, 11, 5.5, 10.5))) {
-    Add-Plain 'gold' 4 4 @($r[0], 15.2, $r[2]) @($r[1], 15.7, $r[3])
+function Add-TCross([double]$cx, [double]$y0, [double]$cz, [double]$w, [double]$h, [string]$uv, [string]$tex, [string]$extra = '') {
+    $f = "`"uv`": $uv, `"texture`": `"#$tex`""
+    foreach ($a in @(45, -45)) {
+        Add-T @(($cx - $w / 2), $y0, $cz) @(($cx + $w / 2), ($y0 + $h), $cz) @{ north = $f; south = $f } ((Get-TRot 'y' $a @($cx, $y0, $cz)) + $extra)
+    }
 }
-# violet lanterns hanging from the arch beside the pillars
+function Get-Face([string]$tex, [double[]]$uv) { return "`"uv`": $(Format-V $uv), `"texture`": `"#$tex`"" }
+$e = New-Object System.Collections.Generic.List[string]
+$soft = ', "shade": false, "neoforge_data": {"block_light": 12, "sky_light": 15}'
+
+# ---- base: plinth, gold trim, recessed body, corner posts with gold collars
+$plinth = @('north', 'south', 'east', 'west', 'up', 'down')
+Add-TSplit @(0.5, 0, 0.5) @(31.5, 2, 15.5) 'stone' $plinth
+Add-TSplit @(0.3, 2, 0.3) @(31.7, 2.5, 15.7) 'gold' @('north', 'south', 'east', 'west', 'up')
+Add-TSplit @(2, 2.5, 2) @(30, 10.5, 14) 'dark' @('north', 'south', 'east', 'west')
+foreach ($c in @(@(0.5, 0.5), @(28.5, 0.5), @(0.5, 12.5), @(28.5, 12.5))) {
+    Add-T @($c[0], 2.5, $c[1]) @(($c[0] + 3), 10.5, ($c[1] + 3)) (Get-All 'stone' @('north', 'south', 'east', 'west'))
+    Add-T @(($c[0] - 0.2), 9.6, ($c[1] - 0.2)) @(($c[0] + 3.2), 10.5, ($c[1] + 3.2)) (Get-All 'gold' @('north', 'south', 'east', 'west'))
+}
+# arched glowing windows: two on the front, one on each end
+foreach ($wx in @(5.5, 22.5)) { Add-T @($wx, 3.5, 1.95) @(($wx + 4), 9.5, 1.95) @{ north = (Get-Face 'glow' @(0, 0, 4, 6)) } $glow }
+Add-T @(1.95, 3.5, 6) @(1.95, 9.5, 10) @{ west = (Get-Face 'glow' @(0, 0, 4, 6)) } $glow
+Add-T @(30.05, 3.5, 6) @(30.05, 9.5, 10) @{ east = (Get-Face 'glow' @(0, 0, 4, 6)) } $glow
+# gold band under the top, the top slab, gold corner caps
+Add-TSplit @(-0.1, 10.5, -0.1) @(32.1, 11, 16.1) 'gold' @('north', 'south', 'east', 'west', 'down')
+Add-TSplit @(0, 11, 0) @(32, 13, 16) 'stone' $sides
+foreach ($c in @(@(-0.2, -0.2), @(28.7, -0.2), @(-0.2, 12.7), @(28.7, 12.7))) {
+    Add-T @($c[0], 12.9, $c[1]) @(($c[0] + 3.5), 13.3, ($c[1] + 3.5)) (Get-All 'gold' @('north', 'south', 'east', 'west', 'up'))
+}
+# runner with the front drape and the magic circle
+Add-T @(10, 13, 1) @(22, 13.2, 12.5) @{ up = (Get-Face 'runner' @(0, 0, 12, 11.5)); south = (Get-Face 'runner' @(12, 0, 16, 0.2)); east = (Get-Face 'runner' @(12, 0, 16, 0.2)); west = (Get-Face 'runner' @(12, 0, 16, 0.2)) }
+Add-T @(10, 13, -0.15) @(22, 13.2, 1) @{ up = (Get-Face 'runner' @(0, 0, 12, 1.15)) }
+Add-T @(10, 1.2, -0.15) @(22, 13.2, -0.15) @{ north = (Get-Face 'drape' @(0, 0, 12, 12)) } $soft
+Add-T @(11, 13.21, 2) @(21, 13.22, 12) @{ up = (Get-Face 'circle' @(0, 0, 10, 10)) } $glow
+
+# ---- the floating amethyst in its gold ring
+Add-TCross 16 15 7 11 12 '[0, 0, 11, 12]' 'amethyst' $glow
+foreach ($r in @(@(12, 20, 3, 3.6), @(12, 20, 10.4, 11), @(12, 12.6, 3.6, 10.4), @(19.4, 20, 3.6, 10.4))) {
+    Add-TPlain 'gold' 4 4 @($r[0], 17.6, $r[2]) @($r[1], 18.2, $r[3])
+}
+foreach ($g in @(@(16, 2.7), @(16, 10.7), @(11.7, 7), @(20.3, 7))) {
+    Add-TPlain 'gem' 6 6 @(($g[0] - 0.5), 17.4, ($g[1] - 0.5)) @(($g[0] + 0.5), 18.4, ($g[1] + 0.5)) $glow
+}
+
+# ---- back: rune pillars, beam, crown, plaque, lanterns
+foreach ($x in @(1, 27)) {
+    Add-T @($x, 13, 12) @(($x + 4), 26.5, 16) (Get-All 'stone' @('north', 'south', 'east', 'west'))
+    Add-T @(($x - 0.25), 13, 11.75) @(($x + 4.25), 14, 16.25) (Get-All 'gold' @('north', 'south', 'east', 'west', 'up'))
+    Add-T @(($x - 0.4), 26.5, 11.6) @(($x + 4.4), 28, 16.4) (Get-All 'gold')
+    Add-T @(($x + 1), 15.5, 11.95) @(($x + 3), 24.5, 11.95) @{ north = (Get-Face 'glow' @(5, 0, 7, 9)) } $glow
+}
+Add-TSplit @(5, 24, 12.5) @(27, 26.5, 15.5) 'stone' @('north', 'south', 'up', 'down')
+Add-TSplit @(5, 23.6, 12.4) @(27, 24, 15.6) 'gold' @('north', 'south', 'down')
+Add-TSplit @(9, 26.5, 13) @(23, 28, 15) 'stone' @('north', 'south', 'east', 'west', 'up')
+Add-TSplit @(12, 28, 13.3) @(20, 29.2, 14.7) 'gold' @('north', 'south', 'east', 'west', 'up')
+Add-T @(12, 23, 12.3) @(20, 31, 12.3) @{ north = (Get-Face 'plaque' @(0, 0, 8, 8)) } $glow
 $lchain = '"uv": [6, 0, 10, 4], "texture": "#chain"'
-$glass = '"uv": [0, 0, 6, 7], "texture": "#lantern"'
-$plate = '"uv": [8, 0, 16, 2], "texture": "#lantern"'
-foreach ($lx in @(4.6, 11.6)) {
-    $e.Add((New-Elem @(($lx - 0.4), 19.8, 14) @(($lx + 0.4), 21.5, 14) @{ north = $lchain; south = $lchain }))
-    $e.Add((New-Elem @(($lx - 0.9), 19.3, 13.1) @(($lx + 0.9), 19.8, 14.9) (Get-All 'lantern' @('north', 'south', 'east', 'west', 'up'))))
-    $e.Add((New-Elem @(($lx - 0.8), 17.1, 13.2) @(($lx + 0.8), 19.3, 14.8) @{ north = $glass; south = $glass; east = $glass; west = $glass } $glow))
-    $e.Add((New-Elem @(($lx - 1), 16.8, 13) @(($lx + 1), 17.1, 15) @{ north = $plate; south = $plate; east = $plate; west = $plate; down = $plate }))
+$lglass = '"uv": [0, 0, 6, 7], "texture": "#lantern"'
+$lplate = '"uv": [8, 0, 16, 2], "texture": "#lantern"'
+foreach ($lx in @(8, 24)) {
+    Add-T @(($lx - 0.4), 21.8, 14) @(($lx + 0.4), 23.6, 14) @{ north = $lchain; south = $lchain }
+    Add-T @(($lx - 0.9), 21.3, 13.1) @(($lx + 0.9), 21.8, 14.9) (Get-All 'lantern' @('north', 'south', 'east', 'west', 'up'))
+    Add-T @(($lx - 0.8), 19.1, 13.2) @(($lx + 0.8), 21.3, 14.8) @{ north = $lglass; south = $lglass; east = $lglass; west = $lglass } $glow
+    Add-T @(($lx - 1), 18.8, 13) @(($lx + 1), 19.1, 15) @{ north = $lplate; south = $lplate; east = $lplate; west = $lplate; down = $lplate }
 }
-# a closed book lying flat, spine to the west: two covers, the page block between them and a banded spine
-function Add-Book([double]$x, [double]$y, [double]$z, [double]$w, [double]$d, [double[]]$cover, [double[]]$plain, [double[]]$spine, [string]$rot = '') {
-    Add-Plain 'book' $plain[0] $plain[1] @($x, $y, $z) @(($x + $w), ($y + 0.5), ($z + $d)) $rot @('north', 'south', 'east', 'west', 'down')
-    Add-Plain 'book' 0 12 @(($x + 0.4), ($y + 0.5), ($z + 0.3)) @(($x + $w - 0.3), ($y + 1.5), ($z + $d - 0.3)) $rot @('north', 'south', 'east')
+
+# ---- right (X 1..9): a gold book stand holding an open book, tilted towards the reader
+Add-TPlain 'gold' 2 2 @(3.5, 13, 3.5) @(7.5, 13.6, 7.5) '' @('north', 'south', 'east', 'west', 'up')
+Add-TPlain 'gold' 2 2 @(5, 13.6, 5) @(6, 16, 6) '' @('north', 'south', 'east', 'west')
+$tilt = Get-TRot 'x' -22.5 @(5.5, 16, 5.5)
+Add-TPlain 'gold' 2 2 @(2.3, 16, 2.3) @(8.7, 16.4, 8.7) $tilt
+Add-TPlain 'book' 8 0 @(2.6, 16.4, 2.6) @(8.4, 16.8, 8.4) $tilt @('north', 'south', 'east', 'west', 'up')
+$pg = Get-Plain 'pages' 0 6 @(2.9, 16.8, 2.9) @(5.5, 17.4, 8.1) @('north', 'south', 'west'); $pg['up'] = (Get-Face 'pages' @(0, 0, 2.6, 5.2))
+Add-T @(2.9, 16.8, 2.9) @(5.5, 17.4, 8.1) $pg $tilt
+$pg = Get-Plain 'pages' 0 6 @(5.5, 16.8, 2.9) @(8.1, 17.4, 8.1) @('north', 'south', 'east'); $pg['up'] = (Get-Face 'pages' @(3, 0, 5.6, 5.2))
+Add-T @(5.5, 16.8, 2.9) @(8.1, 17.4, 8.1) $pg ($tilt + $soft)
+Add-TPlain 'book' 8 8 @(6.6, 15.2, 2.75) @(7.1, 17.42, 2.95) $tilt @('north', 'east', 'west', 'up')
+
+# a closed book lying flat, spine to the west: covers, page block and a banded spine
+function Add-TBook([double]$x, [double]$y, [double]$z, [double]$w, [double]$d, [double[]]$cover, [double[]]$plain, [double[]]$spine, [string]$rot = '') {
+    Add-TPlain 'book' $plain[0] $plain[1] @($x, $y, $z) @(($x + $w), ($y + 0.5), ($z + $d)) $rot @('north', 'south', 'east', 'west', 'down')
+    Add-TPlain 'book' 0 15 @(($x + 0.4), ($y + 0.5), ($z + 0.3)) @(($x + $w - 0.3), ($y + 1.5), ($z + $d - 0.3)) $rot @('north', 'south', 'east')
     $top = Get-Plain 'book' $plain[0] $plain[1] @($x, ($y + 1.5), $z) @(($x + $w), ($y + 2), ($z + $d)) @('north', 'south', 'east', 'west')
-    $top['up'] = "`"uv`": $(Format-V @($cover[0], $cover[1], ($cover[0] + $w), ($cover[1] + $d))), `"texture`": `"#book`""
-    $e.Add((New-Elem @($x, ($y + 1.5), $z) @(($x + $w), ($y + 2), ($z + $d)) $top $rot))
-    $e.Add((New-Elem @(($x - 0.1), ($y + 0.05), $z) @(($x + 0.4), ($y + 1.95), ($z + $d)) @{ west = "`"uv`": $(Format-V @($spine[0], $spine[1], ($spine[0] + $d), ($spine[1] + 2))), `"texture`": `"#book`"" } $rot))
+    $top['up'] = (Get-Face 'book' @($cover[0], $cover[1], ($cover[0] + $w), ($cover[1] + $d)))
+    Add-T @($x, ($y + 1.5), $z) @(($x + $w), ($y + 2), ($z + $d)) $top $rot
+    Add-T @(($x - 0.1), ($y + 0.05), $z) @(($x + 0.4), ($y + 1.95), ($z + $d)) @{ west = (Get-Face 'book' @($spine[0], $spine[1], ($spine[0] + $d), ($spine[1] + 2))) } $rot
 }
-# on the desk. Left: two tomes (back) and two purple candles (front)
-Add-Book -0.2 11.6 6.4 3 4 @(0, 0) @(8, 0) @(0, 5)
-Add-Book 0.3 13.6 6.9 2 3 @(4, 0) @(8, 8) @(6, 5) (Get-Rot 'y' 22.5 @(1.3, 13.6, 8.4))
-foreach ($c in @(@(0.2, 1.4, 3), @(0.8, 3.8, 2))) {
-    $cx = $c[0]; $cz = $c[1]; $ch = $c[2]; $top = 11.6 + $ch
-    $side = "`"uv`": [0, 8, 2, $(Format-N (8 + $ch))], `"texture`": `"#candle`""
-    $e.Add((New-Elem @($cx, 11.6, $cz) @(($cx + 2), $top, ($cz + 2)) @{ north = $side; south = $side; east = $side; west = $side; up = '"uv": [0, 6, 2, 8], "texture": "#candle"' }))
-    Add-Cross ($cx + 1) $top ($cz + 1) 1 1 '[0, 5, 1, 6]' 'candle'
-    Add-Cross ($cx + 1) ($top + 0.6) ($cz + 1) 1 2 '[14, 8, 15, 10]' 'crystal' $glow
+# ---- left (X 22..31): two tomes, two candles, two potions and an amethyst cluster
+Add-TBook 26.4 13 6.2 4 5 @(0, 0) @(8, 0) @(0, 6)
+Add-TBook 26.9 15 6.8 3 4 @(4, 0) @(8, 8) @(0, 9) (Get-TRot 'y' -22.5 @(28.4, 15, 8.8))
+foreach ($c in @(@(28.6, 1.4, 4), @(26.2, 2.2, 3))) {
+    $cx = $c[0]; $cz = $c[1]; $ch = $c[2]; $top = 13 + $ch
+    $side = Get-Face 'candle' @(0, 8, 2, (8 + $ch))
+    Add-T @($cx, 13, $cz) @(($cx + 2), $top, ($cz + 2)) @{ north = $side; south = $side; east = $side; west = $side; up = (Get-Face 'candle' @(0, 6, 2, 8)) }
+    Add-TCross ($cx + 1) $top ($cz + 1) 1 1 '[0, 5, 1, 6]' 'candle'
+    Add-TCross ($cx + 1) ($top + 0.6) ($cz + 1) 1 2 '[14, 8, 15, 10]' 'crystal' $glow
 }
-# front centre: the open book (leather cover, two page blocks, a crimson ribbon)
-Add-Plain 'book' 8 0 @(4.6, 11.8, 0.9) @(11.4, 12.2, 4.3)
-$pg = Get-Plain 'pages' 0 4 @(5, 12.2, 1.2) @(8, 12.8, 4.2) @('north', 'south', 'west')
-$pg['up'] = '"uv": [0, 0, 3, 3], "texture": "#pages"'
-$e.Add((New-Elem @(5, 12.2, 1.2) @(8, 12.8, 4.2) $pg))
-$pg = Get-Plain 'pages' 0 4 @(8, 12.2, 1.2) @(11, 12.8, 4.2) @('north', 'south', 'east')
-$pg['up'] = '"uv": [3, 0, 6, 3], "texture": "#pages"'
-$e.Add((New-Elem @(8, 12.2, 1.2) @(11, 12.8, 4.2) $pg))
-Add-Plain 'book' 8 8 @(9.4, 11.85, 1.0) @(9.9, 12.82, 1.2) '' @('north', 'east', 'west', 'up')
-# right: amethyst cluster and bud (back), two potions (front)
-Add-Cross 13.9 11.6 10.2 7 7 '[9, 0, 16, 7]' 'crystal' $glow
-Add-Cross 11.6 11.8 11.6 5 4 '[9, 8, 14, 12]' 'crystal' $glow
-foreach ($p in @(@(12.8, 0.9, 3, 0), @(13.4, 4.4, 2, 4), @(11.4, 4.8, 2, 7))) {
+foreach ($p in @(@(22.6, 1.4, 3, 0), @(23.4, 5.2, 2, 4))) {
     $px = $p[0]; $pz = $p[1]; $s = $p[2]; $u = $p[3]
-    Add-Plain 'potion' $u 0 @($px, 11.6, $pz) @(($px + $s), (11.6 + $s), ($pz + $s)) $glow @('north', 'south', 'east', 'west', 'up')
-    $nx = $px + $s / 2 - 0.5; $nz = $pz + $s / 2 - 0.5; $ny = 11.6 + $s
-    Add-Plain 'potion' 10 0 @($nx, $ny, $nz) @(($nx + 1), ($ny + 0.8), ($nz + 1)) '' @('north', 'south', 'east', 'west')
-    Add-Plain 'wood' 2 2 @(($nx - 0.1), ($ny + 0.8), ($nz - 0.1)) @(($nx + 1.1), ($ny + 1.4), ($nz + 1.1)) '' @('north', 'south', 'east', 'west', 'up')
+    Add-TPlain 'potion' $u 0 @($px, 13, $pz) @(($px + $s), (13 + $s), ($pz + $s)) $glow @('north', 'south', 'east', 'west', 'up')
+    $nx = $px + $s / 2 - 0.5; $nz = $pz + $s / 2 - 0.5; $ny = 13 + $s
+    Add-TPlain 'potion' 10 0 @($nx, $ny, $nz) @(($nx + 1), ($ny + 0.8), ($nz + 1)) '' @('north', 'south', 'east', 'west')
+    Add-TPlain 'wood' 2 2 @(($nx - 0.1), ($ny + 0.8), ($nz - 0.1)) @(($nx + 1.1), ($ny + 1.4), ($nz + 1.1)) '' @('north', 'south', 'east', 'west', 'up')
 }
-Out-Model 'models\block\rune_engraving_table.json' @"
+Add-TCross 24 13 10 7 7 '[9, 0, 16, 7]' 'crystal' $glow
+Add-TCross 8.6 13 10.6 5 4 '[9, 8, 14, 12]' 'crystal' $glow
+
+$tableTex = @"
     "particle": "forgebound:block/rune_table_stone",
     "stone": "forgebound:block/rune_table_stone",
     "dark": "forgebound:block/rune_table_stone_dark",
     "gold": "forgebound:block/rune_table_gold",
     "runner": "forgebound:block/rune_table_runner",
+    "drape": "forgebound:block/rune_table_drape",
     "circle": "forgebound:block/rune_table_circle",
-    "banner": "forgebound:block/rune_table_banner",
-    "window": "forgebound:block/rune_table_window",
+    "glow": "forgebound:block/rune_table_glow",
     "plaque": "forgebound:block/rune_table_plaque",
+    "amethyst": "forgebound:block/rune_table_amethyst",
     "crystal": "forgebound:block/rune_table_crystal",
     "lantern": "forgebound:block/rune_table_lantern",
     "chain": "forgebound:block/rune_table_chain",
@@ -222,8 +241,32 @@ Out-Model 'models\block\rune_engraving_table.json' @"
     "potion": "forgebound:block/rune_table_potion",
     "candle": "minecraft:block/white_candle",
     "gem": "forgebound:block/forge_anvil_gem"
-"@ $e
+"@
+Out-Model 'models\block\rune_engraving_table.json' $tableTex $e
 "table: $($e.Count) elements"
+# the item model: the same table re-centred on the item's origin (X 0..32 -> -8..24)
+$tableBlock = $e
+$e = New-Object System.Collections.Generic.List[string]
+$offset = 8
+foreach ($el in $tableBlock) { $e.Add($el) }
+$itemJson = (Get-Content -Raw (Join-Path $assets 'models\block\rune_engraving_table.json') | ConvertFrom-Json)
+foreach ($el in $itemJson.elements) {
+    $el.from[0] = [Math]::Round($el.from[0] + $offset, 4); $el.to[0] = [Math]::Round($el.to[0] + $offset, 4)
+    if ($el.PSObject.Properties['rotation']) { $el.rotation.origin[0] = [Math]::Round($el.rotation.origin[0] + $offset, 4) }
+}
+$itemJson.PSObject.Properties.Remove('parent')
+$itemJson | Add-Member -NotePropertyName 'parent' -NotePropertyValue 'minecraft:block/block' -Force
+$itemJson | Add-Member -NotePropertyName 'display' -NotePropertyValue ([ordered]@{
+        gui                   = @{ rotation = @(30, 225, 0); translation = @(0, -2.5, 0); scale = @(0.34, 0.34, 0.34) }
+        ground                = @{ rotation = @(0, 0, 0); translation = @(0, 3, 0); scale = @(0.15, 0.15, 0.15) }
+        fixed                 = @{ rotation = @(0, 0, 0); translation = @(0, -2, 0); scale = @(0.3, 0.3, 0.3) }
+        thirdperson_righthand = @{ rotation = @(75, 45, 0); translation = @(0, 2.5, 0); scale = @(0.22, 0.22, 0.22) }
+        firstperson_righthand = @{ rotation = @(0, 45, 0); translation = @(0, 0, 0); scale = @(0.25, 0.25, 0.25) }
+        firstperson_lefthand  = @{ rotation = @(0, 225, 0); translation = @(0, 0, 0); scale = @(0.25, 0.25, 0.25) }
+    }) -Force
+[IO.File]::WriteAllText((Join-Path $assets 'models\item\rune_engraving_table.json'), ($itemJson | ConvertTo-Json -Depth 12 -Compress), $utf8)
+# the side half draws nothing (the main half renders the whole table); it keeps a particle texture for break effects
+[IO.File]::WriteAllText((Join-Path $assets 'models\block\rune_engraving_table_side.json'), "{`"textures`": {`"particle`": `"forgebound:block/rune_table_stone`"}}`n", $utf8)
 
 # item models: the blocks, scaled to fit their extra height and the anvil's horn
 [IO.File]::WriteAllText((Join-Path $assets 'models\item\forge_anvil.json'), @"
@@ -236,19 +279,6 @@ Out-Model 'models\block\rune_engraving_table.json' @"
     "thirdperson_righthand": {"rotation": [75, 45, 0], "translation": [0, 2.5, 0], "scale": [0.35, 0.35, 0.35]},
     "firstperson_righthand": {"rotation": [0, 45, 0], "translation": [0, 0, 0], "scale": [0.38, 0.38, 0.38]},
     "firstperson_lefthand": {"rotation": [0, 225, 0], "translation": [0, 0, 0], "scale": [0.38, 0.38, 0.38]}
-  }
-}
-"@.Replace("`r`n", "`n"), $utf8)
-[IO.File]::WriteAllText((Join-Path $assets 'models\item\rune_engraving_table.json'), @"
-{
-  "parent": "forgebound:block/rune_engraving_table",
-  "display": {
-    "gui": {"rotation": [30, 225, 0], "translation": [0, -3.2, 0], "scale": [0.39, 0.39, 0.39]},
-    "ground": {"rotation": [0, 0, 0], "translation": [0, 3, 0], "scale": [0.2, 0.2, 0.2]},
-    "fixed": {"rotation": [0, 0, 0], "translation": [0, -2, 0], "scale": [0.38, 0.38, 0.38]},
-    "thirdperson_righthand": {"rotation": [75, 45, 0], "translation": [0, 2.5, 0], "scale": [0.3, 0.3, 0.3]},
-    "firstperson_righthand": {"rotation": [0, 45, 0], "translation": [0, 0, 0], "scale": [0.32, 0.32, 0.32]},
-    "firstperson_lefthand": {"rotation": [0, 225, 0], "translation": [0, 0, 0], "scale": [0.32, 0.32, 0.32]}
   }
 }
 "@.Replace("`r`n", "`n"), $utf8)

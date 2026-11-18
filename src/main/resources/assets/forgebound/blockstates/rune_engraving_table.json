@@ -1,8 +1,12 @@
 {
   "variants": {
-    "facing=north": {"model": "forgebound:block/rune_engraving_table"},
-    "facing=east": {"model": "forgebound:block/rune_engraving_table", "y": 90},
-    "facing=south": {"model": "forgebound:block/rune_engraving_table", "y": 180},
-    "facing=west": {"model": "forgebound:block/rune_engraving_table", "y": 270}
+    "facing=north,side=false": {"model": "forgebound:block/rune_engraving_table"},
+    "facing=east,side=false": {"model": "forgebound:block/rune_engraving_table", "y": 90},
+    "facing=south,side=false": {"model": "forgebound:block/rune_engraving_table", "y": 180},
+    "facing=west,side=false": {"model": "forgebound:block/rune_engraving_table", "y": 270},
+    "facing=north,side=true": {"model": "forgebound:block/rune_engraving_table_side"},
+    "facing=east,side=true": {"model": "forgebound:block/rune_engraving_table_side"},
+    "facing=south,side=true": {"model": "forgebound:block/rune_engraving_table_side"},
+    "facing=west,side=true": {"model": "forgebound:block/rune_engraving_table_side"}
   }
 }

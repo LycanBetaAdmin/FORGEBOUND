@@ -116,7 +116,8 @@ public final class ModContent {
     // ---- Rune Engraving Table (phase 3)
     public static final DeferredBlock<com.forgebound.enhance.RuneTableBlock> RUNE_TABLE = BLOCKS.register("rune_engraving_table",
             () -> new com.forgebound.enhance.RuneTableBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).strength(3.0F, 1200.0F)
-                    .requiresCorrectToolForDrops().sound(SoundType.WOOD).lightLevel(s -> 7).noOcclusion()));
+                    .requiresCorrectToolForDrops().sound(SoundType.WOOD).lightLevel(s -> 7).noOcclusion()
+                    .pushReaction(net.minecraft.world.level.material.PushReaction.BLOCK)));
     public static final DeferredItem<BlockItem> RUNE_TABLE_ITEM = ITEMS.registerSimpleBlockItem(RUNE_TABLE);
     public static final DeferredHolder<MenuType<?>, MenuType<com.forgebound.enhance.EngraveMenu>> ENGRAVE_MENU =
             MENUS.register("rune_engraving_table", () -> new MenuType<>(com.forgebound.enhance.EngraveMenu::new, FeatureFlags.VANILLA_SET));

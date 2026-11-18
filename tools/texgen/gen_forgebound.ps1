@@ -1,6 +1,6 @@
-# Generates FORGEBOUND's small item icons (Arcane Shard, Crystal Dust, Ascension Core, Fortune Dice, Soul Essence,
-# Fortune Crystal, Sealing Rune) and the Sundered effect icon. Ores, ingots, the Forge Anvil and the Rune Engraving Table
-# come from gen_forgebound_blocks.ps1.
+# Generates FORGEBOUND's small item icons (Arcane Shard, Soul Essence, Fortune Crystal) and the Sundered effect icon.
+# Crystal Dust, Ascension Core, Fortune Dice, Sealing Rune, raw metals and ingots come from gen_forgebound_refs.ps1;
+# the Forge Anvil, ores and the Rune Engraving Table from gen_forgebound_blocks.ps1.
 # Run: powershell -File tools\texgen\gen_forgebound.ps1
 Add-Type -AssemblyName System.Drawing
 $root = Join-Path $PSScriptRoot '..\..\src\main\resources\assets\forgebound\textures'
@@ -58,64 +58,8 @@ $shard = @(
     '................')
 $b = New-Tex; Write-Mask $b $shard @{ o = '#0B2350'; d = '#1B4F99'; m = '#2E86E0'; l = '#7FC8FF'; h = '#F2FBFF' }; Save-Tex $b $itemDir 'arcane_shard'
 
-# ---- Crystal Dust: a violet heap with sparkles
-$dust = @(
-    '................',
-    '................',
-    '................',
-    '..........h.....',
-    '.....h..........',
-    '................',
-    '........o.......',
-    '......oomoo.....',
-    '.....omlhlmo....',
-    '....omlhllmmo...',
-    '...ommlllmmddo..',
-    '..ommmmmmmddddo.',
-    '.oddmmmmdddddddo',
-    '.oooooooooooooo.',
-    '................',
-    '................')
-$b = New-Tex; Write-Mask $b $dust @{ o = '#2A1240'; d = '#5B2A8C'; m = '#8C4FD0'; l = '#C08CF5'; h = '#F6E8FF' }; Save-Tex $b $itemDir 'crystal_dust'
 
-# ---- Ascension Core: a glowing orb in a gold setting with four prongs
-$b = New-Tex
-for ($y = 0; $y -lt 16; $y++) {
-    for ($x = 0; $x -lt 16; $x++) {
-        $d = [Math]::Sqrt(($x - 7.5) * ($x - 7.5) + ($y - 7.5) * ($y - 7.5))
-        if ($d -lt 1.6) { Set-Px $b $x $y '#FFFFFF' }
-        elseif ($d -lt 2.8) { Set-Px $b $x $y '#B8F4FF' }
-        elseif ($d -lt 4.0) { Set-Px $b $x $y '#5FD0F5' }
-        elseif ($d -lt 4.9) { Set-Px $b $x $y '#7A4FD8' }
-        elseif ($d -lt 5.9) { if ($x + $y -lt 15) { Set-Px $b $x $y '#F2C04E' } else { Set-Px $b $x $y '#B8862B' } }
-        elseif ($d -lt 6.6) { Set-Px $b $x $y '#5A3D10' }
-    }
-}
-foreach ($p in @(@(7, 0), @(8, 0), @(7, 15), @(8, 15), @(0, 7), @(0, 8), @(15, 7), @(15, 8))) { Set-Px $b $p[0] $p[1] '#F2C04E' }
-foreach ($p in @(@(7, 1), @(8, 1), @(7, 14), @(8, 14), @(1, 7), @(1, 8), @(14, 7), @(14, 8))) { Set-Px $b $p[0] $p[1] '#B8862B' }
-Set-Px $b 6 5 '#FFFFFF'; Set-Px $b 5 6 '#E8FCFF'
-Save-Tex $b $itemDir 'ascension_core'
 
-# ---- Fortune Dice: an ivory die with gold edges, seen corner-on (top face and two sides with pips)
-$die = @(
-    '................',
-    '..oooooooooooo..',
-    '.ohhhhhhhhhhhlo.',
-    '.ohpphhhhhhpplo.',
-    '.ohpphhhhhhpplo.',
-    '.ohhhhhhhhhhhlo.',
-    '.ohhhhhpphhhhlo.',
-    '.ohhhhhpphhhhlo.',
-    '.ohhhhhhhhhhhlo.',
-    '.ohpphhhhhhpplo.',
-    '.ohpphhhhhhpplo.',
-    '.ohhhhhhhhhhhlo.',
-    '.olllllllllllmo.',
-    '..oooooooooooo..',
-    '................',
-    '................')
-$b = New-Tex; Write-Mask $b $die @{ o = '#8C6420'; h = '#FFF6DC'; l = '#DCCBA0'; m = '#B8A478'; p = '#B8862B' }
-Save-Tex $b $itemDir 'fortune_dice'
 
 # ---- Soul Essence: a pale teal wisp curling up from a glowing core
 $wisp = @(
@@ -157,17 +101,6 @@ $gem = @(
     '................')
 $b = New-Tex; Write-Mask $b $gem @{ o = '#7A3A1A'; d = '#C2603A'; m = '#F09A6A'; l = '#FFD08A'; h = '#FFF4D6' } 1; Set-Px $b 5 5 '#FFFFFF'; Save-Tex $b $itemDir 'fortune_crystal'
 
-# ---- Sealing Rune: a dark stone tablet with a glowing gold seal glyph
-$b = New-Tex
-for ($y = 2; $y -lt 15; $y++) {
-    for ($x = 3; $x -lt 13; $x++) {
-        $edge = ($x -eq 3 -or $x -eq 12 -or $y -eq 2 -or $y -eq 14)
-        if ($edge) { Set-Px $b $x $y '#1E1828' } else { Set-Px $b $x $y (Get-Pick @('#3A3046', '#433852', '#332A3E') @(4, 3, 3)) }
-    }
-}
-foreach ($p in @(@(7, 4), @(8, 4), @(6, 5), @(9, 5), @(5, 7), @(10, 7), @(5, 8), @(10, 8), @(6, 10), @(9, 10), @(7, 11), @(8, 11))) { Set-Px $b $p[0] $p[1] '#D6A84B' }
-foreach ($p in @(@(7, 6), @(8, 6), @(7, 7), @(8, 7), @(7, 8), @(8, 8), @(7, 9), @(8, 9))) { Set-Px $b $p[0] $p[1] '#FFE08A' }
-Save-Tex $b $itemDir 'sealing_rune'
 
 # ---- Sundered effect icon (18 x 18): a cracked steel plate
 $effDir = Join-Path $root 'mob_effect'; New-Item -ItemType Directory -Force $effDir | Out-Null
