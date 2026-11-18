@@ -172,5 +172,11 @@
   "screen.forgebound.crucible.need_fuel": "Needs coal or charcoal",
   "screen.forgebound.crucible.unrecoverable": "This can't be recovered",
   "screen.forgebound.crucible.unrecoverable2": "It has no crafting recipe",
-  "screen.forgebound.crucible.output_blocked": "Empty the output first"
+  "screen.forgebound.crucible.output_blocked": "Empty the output first",
+  "tooltip.forgebound.badge": "FORGEBOUND · %s %s",
+  "tooltip.forgebound.apotheosis": "◇ Apotheosis · %s Rarity",
+  "tooltip.forgebound.section.enhancements": "Enhancements %s/%s",
+  "tooltip.forgebound.section.affixes": "Apotheosis Affixes",
+  "tooltip.forgebound.section.unique": "Unique Attribute",
+  "tooltip.forgebound.durability": "Durability: %s / %s"
 }

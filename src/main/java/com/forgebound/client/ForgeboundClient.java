@@ -28,10 +28,25 @@ public final class ForgeboundClient {
             event.register(ModContent.TRANSFER_MENU.get(), TransferScreen::new);
             event.register(ModContent.CRUCIBLE_MENU.get(), CrucibleScreen::new);
         }
+
+        @SubscribeEvent
+        public static void onTooltipFactories(net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent event) {
+            TooltipFrame.onFactories(event);
+        }
     }
 
     @EventBusSubscriber(modid = Forgebound.MODID, value = Dist.CLIENT)
     public static final class GameEvents {
+
+        @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.LOWEST)
+        public static void onGather(net.neoforged.neoforge.client.event.RenderTooltipEvent.GatherComponents event) {
+            TooltipFrame.onGather(event);
+        }
+
+        @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.LOWEST)
+        public static void onColor(net.neoforged.neoforge.client.event.RenderTooltipEvent.Color event) {
+            TooltipFrame.onColor(event);
+        }
 
         @SubscribeEvent
         public static void onTooltip(ItemTooltipEvent event) {
