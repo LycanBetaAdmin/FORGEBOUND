@@ -64,35 +64,28 @@ foreach ($name in $metals.Keys) {
     Save-Tex $b $itemDir "raw_$name"
 }
 
-# ---- ingot: a thick bar seen from above-front: a big top face with a coloured rim and the emblem, a darker front
-$emblems = @{
-    verdantite  = @('..e..', '.eee.', 'eeeee', '.eee.', '..e..')   # leaf
-    infernalite = @('..e..', '.ee..', '.eee.', 'eeeee', '.eee.')   # flame
-    voidsteel   = @('.eee.', 'e...e', 'e.e.e', 'e...e', '.eee.')   # void ring
-}
+# ---- ingot: the vanilla ingot silhouette (a bar lying diagonally, rising to the right): o outline, e end face,
+# t top face, r bright ridge along the top edge, f front face; shaded with each metal's palette
+$ingot = @(
+    '................',
+    '................',
+    '..........oo....',
+    '.......oootto...',
+    '....oooettttto..',
+    '.oooettttttttro.',
+    'oerttttttttrrtfo',
+    'oerttttttrrrtfeo',
+    'oeerttrrrtffffeo',
+    'oeeerrtfffffeeeo',
+    'ooeetfffffeefoo.',
+    '.ooetfffffooo...',
+    '..ooefffoo......',
+    '...oooo.........',
+    '................',
+    '................')
 foreach ($name in $metals.Keys) {
     $p = $metals[$name]; $b = New-Tex
-    for ($y = 2; $y -le 9; $y++) {
-        $xs = 4 - [Math]::Floor(($y - 2) / 2); $xe = $xs + 11
-        for ($x = $xs; $x -le $xe; $x++) {
-            $c = if ($y -eq 2 -or $x -eq $xs -or $x -eq $xe) { $p.rim } elseif ($y -eq 9) { $p.rimD } elseif ($y -eq 3 -or $x -eq $xs + 1) { $p.l } else { $p.face }
-            Set-Px $b $x $y $c
-        }
-        Set-Px $b ($xe + 1) $y $p.o
-        Set-Px $b ($xs - 1) $y $p.o
-    }
-    for ($x = 3; $x -le 15; $x++) { Set-Px $b $x 1 $p.o }
-    for ($y = 10; $y -le 12; $y++) {
-        for ($x = 1; $x -le 12; $x++) { Set-Px $b $x $y ($(if ($x -eq 1 -or $x -eq 12 -or $y -eq 12) { $p.rimD } else { $p.faceD })) }
-        Set-Px $b 0 $y $p.o; Set-Px $b 13 $y $p.o
-        for ($x = 13; $x -le 13 + (12 - $y); $x++) { Set-Px $b $x $y ($(if ($x -eq 13 + (12 - $y)) { $p.o } else { $p.rimD })) }
-    }
-    for ($x = 0; $x -le 13; $x++) { Set-Px $b $x 13 $p.o }
-    $em = $emblems[$name]
-    for ($r = 0; $r -lt 5; $r++) {
-        $shift = [Math]::Floor(($r + 3 - 2) / 2)
-        for ($c = 0; $c -lt 5; $c++) { if ($em[$r][$c] -eq 'e') { Set-Px $b (6 + $c - $shift + 1) (3 + $r) $p.emb } }
-    }
+    Write-Mask $b $ingot @{ o = $p.o; e = $p.m; t = $p.l; r = $p.h; f = $p.d }
     Save-Tex $b $itemDir "${name}_ingot"
 }
 
@@ -192,7 +185,7 @@ function New-Stone([string[]]$cols, [string]$mortar, [string]$lit, [string]$shad
     }
     return $b
 }
-Save-Tex (New-Stone @('#4A4058', '#524866', '#433A50') '#2A2234' '#6A5E7C' '#3A3046') $blockDir 'rune_table_stone'
+Save-Tex (New-Stone @('#5E5474', '#685E80', '#564C6A') '#2E2638' '#80749A' '#463C58') $blockDir 'rune_table_stone'
 Save-Tex (New-Stone @('#3A2E50', '#43365C', '#352A48') '#221A30' '#56487A' '#2E2440') $blockDir 'rune_table_stone_dark'
 # gold trim (same as the anvil's)
 Copy-Item (Join-Path $blockDir 'forge_anvil_gold.png') (Join-Path $blockDir 'rune_table_gold.png') -Force
@@ -249,8 +242,8 @@ Save-Tex $b $blockDir 'rune_table_plaque'
 $b = New-Tex
 for ($y = 0; $y -lt 16; $y++) {
     for ($x = 0; $x -lt 16; $x++) {
-        $c = if ($x -lt 4) { '#E2B4FF' } elseif ($x -lt 8) { '#C07CFF' } elseif ($x -lt 12) { '#9A4CF0' } else { '#7330C4' }
-        if ((($x + 2 * $y) % 11) -eq 0) { $c = '#F6E6FF' }
+        $c = if ($x -lt 4) { '#B866FF' } elseif ($x -lt 8) { '#9A40F0' } elseif ($x -lt 12) { '#7A28D0' } else { '#5A1AA8' }
+        if ((($x + 2 * $y) % 11) -eq 0) { $c = '#E6B8FF' }
         Set-Px $b $x $y $c
     }
 }
@@ -284,10 +277,9 @@ for ($y = 0; $y -lt 16; $y++) { for ($x = 0; $x -lt 16; $x++) { Set-Px $b $x $y 
 foreach ($ry in @(3, 5, 7, 10, 12)) { for ($x = 2; $x -lt 14; $x++) { if ((($x * 7 + $ry) % 5) -ne 0 -and $x -ne 7 -and $x -ne 8) { Set-Px $b $x $ry '#8A55C8' } } }
 for ($y = 0; $y -lt 16; $y++) { Set-Px $b 7 $y '#C9B48E'; Set-Px $b 8 $y '#D8C6A4' }
 Save-Tex $b $blockDir 'rune_table_pages'
-# dark wood for the potion rack, glass for the potions, white for the quill
+# dark wood for the potion corks, glass for the potions
 $b = New-Tex; Fill-Noise $b @('#4A2E1E', '#5A3826', '#3E2618') @(5, 3, 2); Save-Tex $b $blockDir 'rune_table_wood'
 $b = New-Tex
-for ($y = 0; $y -lt 16; $y++) { for ($x = 0; $x -lt 16; $x++) { Set-Px $b $x $y ($(if ($y -lt 5) { '#B8A8C8' } elseif ($x -lt 5) { '#D27CFF' } else { '#8A3AE0' })) } }
+for ($y = 0; $y -lt 16; $y++) { for ($x = 0; $x -lt 16; $x++) { Set-Px $b $x $y ($(if ($x -lt 3) { '#E6A8FF' } elseif ($x -lt 9) { '#B44CF0' } else { '#7A28C8' })) } }
 Save-Tex $b $blockDir 'rune_table_potion'
-$b = New-Tex; Fill-Noise $b @('#F4F0FA', '#E6E0EE', '#FFFFFF') @(4, 3, 2); Save-Tex $b $blockDir 'rune_table_quill'
 'block textures written'

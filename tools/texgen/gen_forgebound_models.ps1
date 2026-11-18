@@ -84,70 +84,85 @@ Out-Model 'models\block\forge_anvil.json' @"
 "anvil: $($e.Count) elements"
 
 # =====================================================================  Rune Engraving Table (front = north)
+# A stone altar: gold-banded desk with a purple runner and a glowing magic circle, two rune banners down the front, a
+# gold-set gem and glowing windows; behind it two rune pillars hold a stepped arch with a plaque, a crystal hanging in a
+# gold ring on chains and a violet lantern each side. Books on the left, crystals and potions on the right.
 $e = New-Object System.Collections.Generic.List[string]
 $plinth = Get-All 'stone'; $plinth['down'] = '"texture": "#stone", "cullface": "down"'
-$e.Add((New-Elem @(0, 0, 0.5) @(16, 2, 15.5) $plinth))                                   # plinth
-$e.Add((New-Elem @(1, 2, 1.5) @(15, 10, 14.5) (Get-All 'dark')))                         # body
-foreach ($x in @(0.5, 12.5)) { $e.Add((New-Elem @($x, 2, 1) @(($x + 3), 10, 4) (Get-All 'stone'))) }   # front corner posts
-foreach ($x in @(0.5, 12.5)) { $e.Add((New-Elem @($x, 2, 12) @(($x + 3), 10, 15) (Get-All 'stone'))) } # back corner posts
-# glowing windows: two in the centre front, one on each post, one each side
-foreach ($wx in @(5, 9.5)) { $e.Add((New-Elem @($wx, 3.5, 1.45) @(($wx + 1.5), 6, 1.5) (Get-One 'north' 'window' $full) $glow)) }
-foreach ($wx in @(1.25, 13.25)) { $e.Add((New-Elem @($wx, 3.5, 0.95) @(($wx + 1.5), 7, 1) (Get-One 'north' 'window' $full) $glow)) }
-$e.Add((New-Elem @(14.5, 4, 6) @(14.55, 8, 10) (Get-One 'east' 'window' $full) $glow))
-$e.Add((New-Elem @(1.45, 4, 6) @(1.5, 8, 10) (Get-One 'west' 'window' $full) $glow))
-# gold trim: under the top, framing the centre panel, and the gem setting with its gem
-$e.Add((New-Elem @(0.5, 9.5, 0.9) @(15.5, 10, 15.1) (Get-All 'gold' @('north', 'south', 'east', 'west'))))
-$e.Add((New-Elem @(4.5, 2.5, 1.4) @(4.9, 9.5, 1.5) (Get-One 'north' 'gold')))
-$e.Add((New-Elem @(11.1, 2.5, 1.4) @(11.5, 9.5, 1.5) (Get-One 'north' 'gold')))
-$e.Add((New-Elem @(7, 6.3, 1.2) @(9, 8.3, 1.5) (Get-All 'gold' @('north', 'up', 'down', 'east', 'west')) (Get-Rot 'z' 45 @(8, 7.3, 1.35))))
-$e.Add((New-Elem @(7.4, 6.7, 1.1) @(8.6, 7.9, 1.2) (Get-One 'north' 'gem' $full) ((Get-Rot 'z' 45 @(8, 7.3, 1.15)) + $glow)))
-# top slab, the purple runner and the glowing magic circle
-$e.Add((New-Elem @(0, 10, 0) @(16, 12, 16) (Get-All 'stone')))
-foreach ($c in @(@(0, 0), @(13, 0), @(0, 13), @(13, 13))) { $e.Add((New-Elem @(($c[0] - 0.1), 11.5, ($c[1] - 0.1)) @(($c[0] + 3.1), 12.1, ($c[1] + 3.1)) (Get-All 'gold' @('north', 'south', 'east', 'west', 'up')))) }
-$e.Add((New-Elem @(2.5, 12, -0.05) @(13.5, 12.2, 12) (Get-All 'runner' @('north', 'up', 'east', 'west'))))
-$e.Add((New-Elem @(3, 12.21, 0.5) @(13, 12.22, 10.5) (Get-One 'up' 'circle' $full) $glow))
-# banners hanging over the front edge
-foreach ($bx in @(2.8, 9.7)) { $e.Add((New-Elem @($bx, 3.5, -0.1) @(($bx + 3.5), 12.2, -0.05) (Get-One 'north' 'banner' $full))) }
-# back pillars with rune windows, gold caps, the arch, the plaque
+$e.Add((New-Elem @(0, 0, 0.5) @(16, 1.5, 15.5) $plinth))                                  # plinth
+$e.Add((New-Elem @(1, 1.5, 1.5) @(15, 9.5, 14.5) (Get-All 'dark')))                       # recessed body
+foreach ($c in @(@(0, 0.5), @(13, 0.5), @(0, 12.5), @(13, 12.5))) {                         # corner posts
+    $e.Add((New-Elem @($c[0], 1.5, $c[1]) @(($c[0] + 3), 9.5, ($c[1] + 3)) (Get-All 'stone')))
+}
+foreach ($wx in @(0.9, 13.9)) { $e.Add((New-Elem @($wx, 3, 0.45) @(($wx + 1.2), 7.5, 0.5) (Get-One 'north' 'window' $full) $glow)) }
+foreach ($wx in @(5.2, 9.3)) { $e.Add((New-Elem @($wx, 2.5, 1.45) @(($wx + 1.5), 5, 1.5) (Get-One 'north' 'window' $full) $glow)) }
+$e.Add((New-Elem @(14.95, 3, 5.5) @(15, 7.5, 10.5) (Get-One 'east' 'window' $full) $glow))
+$e.Add((New-Elem @(1, 3, 5.5) @(1.05, 7.5, 10.5) (Get-One 'west' 'window' $full) $glow))
+# gold: a band under the top, the post bases, the gem setting and its gem
+$e.Add((New-Elem @(-0.1, 9, 0.4) @(16.1, 9.6, 15.6) (Get-All 'gold' @('north', 'south', 'east', 'west'))))
+foreach ($c in @(@(-0.1, 0.4), @(12.9, 0.4), @(-0.1, 12.4), @(12.9, 12.4))) {
+    $e.Add((New-Elem @($c[0], 1.5, $c[1]) @(($c[0] + 3.2), 2.1, ($c[1] + 3.2)) (Get-All 'gold' @('north', 'south', 'east', 'west', 'up'))))
+}
+$e.Add((New-Elem @(7, 5.6, 1.2) @(9, 7.6, 1.5) (Get-All 'gold' @('north', 'up', 'down', 'east', 'west')) (Get-Rot 'z' 45 @(8, 6.6, 1.35))))
+$e.Add((New-Elem @(7.4, 6, 1.1) @(8.6, 7.2, 1.2) (Get-One 'north' 'gem' $full) ((Get-Rot 'z' 45 @(8, 6.6, 1.15)) + $glow)))
+# the top, its gold corner caps, the runner and the magic circle
+$e.Add((New-Elem @(-0.5, 9.6, 0) @(16.5, 11.6, 16) (Get-All 'stone')))
+foreach ($c in @(@(-0.6, -0.1), @(13.1, -0.1), @(-0.6, 12.6), @(13.1, 12.6))) {
+    $e.Add((New-Elem @($c[0], 11.5, $c[1]) @(($c[0] + 3.5), 11.9, ($c[1] + 3.5)) (Get-All 'gold' @('north', 'south', 'east', 'west', 'up'))))
+}
+$e.Add((New-Elem @(1.5, 11.6, 0.6) @(14.5, 11.8, 12.4) (Get-All 'runner' @('up', 'north', 'south', 'east', 'west'))))
+$e.Add((New-Elem @(2.5, 11.81, 1.1) @(13.5, 11.82, 12.1) (Get-One 'up' 'circle' $full) $glow))
+# two banners over the front edge, their runes glowing
+foreach ($bx in @(2.4, 9.6)) {
+    $e.Add((New-Elem @($bx, 3.2, -0.15) @(($bx + 4), 11.8, -0.1) (Get-One 'north' 'banner' $full) ', "shade": false, "neoforge_data": {"block_light": 11, "sky_light": 15}'))
+    $e.Add((New-Elem @($bx, 11.6, -0.15) @(($bx + 4), 11.8, 0.6) (Get-One 'up' 'banner' '"uv": [1, 0, 15, 2], ')))
+}
+# back pillars: gold base and cap, one tall glowing window each
 foreach ($x in @(0.5, 12.5)) {
-    $e.Add((New-Elem @($x, 12, 12.5) @(($x + 3), 24, 15.5) (Get-All 'dark')))
-    $e.Add((New-Elem @(($x + 0.75), 15, 12.45) @(($x + 2.25), 21, 12.5) (Get-One 'north' 'window' $full) $glow))
-    $e.Add((New-Elem @(($x - 0.3), 24, 12.2) @(($x + 3.3), 25.5, 15.8) (Get-All 'gold')))
-    $e.Add((New-Elem @(($x - 0.2), 12, 12.3) @(($x + 3.2), 13, 15.7) (Get-All 'gold' @('north', 'south', 'east', 'west'))))
+    $e.Add((New-Elem @($x, 11.6, 12.5) @(($x + 3), 20.5, 15.5) (Get-All 'stone')))
+    $e.Add((New-Elem @(($x - 0.2), 11.6, 12.3) @(($x + 3.2), 12.6, 15.7) (Get-All 'gold' @('north', 'south', 'east', 'west', 'up'))))
+    $e.Add((New-Elem @(($x - 0.3), 20.5, 12.2) @(($x + 3.3), 21.8, 15.8) (Get-All 'gold')))
+    $e.Add((New-Elem @(($x + 0.8), 13.6, 12.45) @(($x + 2.2), 19.5, 12.5) (Get-One 'north' 'window' $full) $glow))
 }
-$e.Add((New-Elem @(3.5, 22, 13) @(12.5, 24, 15) (Get-All 'dark')))
-$e.Add((New-Elem @(5.5, 21.5, 12.6) @(10.5, 26.5, 12.9) (Get-All 'gold' @('south', 'east', 'west', 'up', 'down'))))
-$e.Add((New-Elem @(5.5, 21.5, 12.55) @(10.5, 26.5, 12.6) (Get-One 'north' 'plaque' $full) $glow))
-# chains down from the arch to a gold ring round the floating crystal
-foreach ($cx in @(5.5, 10.5)) {
-    $e.Add((New-Elem @(($cx - 0.5), 16.5, 13.5) @(($cx + 0.5), 22, 13.5) @{ north = "`"uv`": [6, 0, 10, 11], `"texture`": `"#chain`""; south = "`"uv`": [6, 0, 10, 11], `"texture`": `"#chain`"" }))
+# the stepped arch with the rune plaque in front
+$e.Add((New-Elem @(3.5, 19, 13) @(12.5, 20.5, 15) (Get-All 'stone')))
+$e.Add((New-Elem @(5, 20.5, 13.2) @(11, 21.5, 14.8) (Get-All 'stone')))
+$e.Add((New-Elem @(3.4, 18.8, 12.9) @(12.6, 19.2, 15.1) (Get-All 'gold' @('north', 'south', 'down'))))
+$e.Add((New-Elem @(6, 19.2, 12.6) @(10, 23.2, 12.9) (Get-All 'gold' @('south', 'east', 'west', 'up', 'down'))))
+$e.Add((New-Elem @(6, 19.2, 12.55) @(10, 23.2, 12.6) (Get-One 'north' 'plaque' $full) $glow))
+# the crystal hanging under the arch in a gold ring, on two chains
+$chain = '"uv": [6, 0, 10, 11], "texture": "#chain"'
+foreach ($cx in @(6.2, 9.8)) {
+    $e.Add((New-Elem @(($cx - 0.5), 16.2, 12.5) @(($cx + 0.5), 19, 12.5) @{ north = $chain; south = $chain }))
 }
-$e.Add((New-Elem @(5, 16, 11.5) @(11, 16.6, 12) (Get-All 'gold')))
-$e.Add((New-Elem @(5, 16, 15) @(11, 16.6, 15.5) (Get-All 'gold')))
-$e.Add((New-Elem @(5, 16, 12) @(5.5, 16.6, 15) (Get-All 'gold')))
-$e.Add((New-Elem @(10.5, 16, 12) @(11, 16.6, 15) (Get-All 'gold')))
+foreach ($r in @(@(5.6, 10.6, 10.2, 10.6), @(5.6, 10.6, 14.4, 14.8), @(5.6, 6, 10.6, 14.4), @(10.2, 10.6, 10.6, 14.4))) {
+    $e.Add((New-Elem @($r[0], 15.8, $r[2]) @($r[1], 16.2, $r[3]) (Get-All 'gold') (Get-Rot 'y' 45 @(8.1, 16, 12.5))))
+}
 $cry = Get-All 'crystal' @('north', 'south', 'east', 'west', 'up', 'down')
-$e.Add((New-Elem @(7, 15, 12.75) @(9, 20, 14.75) $cry ((Get-Rot 'y' 45 @(8, 15, 13.75)) + $glow)))
-$e.Add((New-Elem @(7.5, 13.8, 13.25) @(8.5, 15, 14.25) $cry ((Get-Rot 'y' 45 @(8, 13.8, 13.75)) + $glow)))
-# violet lanterns hanging from the arch ends
-foreach ($lx in @(4.5, 11.5)) {
-    $e.Add((New-Elem @(($lx - 0.4), 19.5, 14) @(($lx + 0.4), 22, 14) @{ north = "`"uv`": [6, 0, 10, 5], `"texture`": `"#chain`""; south = "`"uv`": [6, 0, 10, 5], `"texture`": `"#chain`"" }))
-    $e.Add((New-Elem @(($lx - 1), 19, 13) @(($lx + 1), 19.5, 15) (Get-All 'lantern' @('north', 'south', 'east', 'west', 'up')) ''))
-    $e.Add((New-Elem @(($lx - 1), 16.5, 13) @(($lx + 1), 19, 15) @{ north = '"uv": [0, 0, 6, 7], "texture": "#lantern"'; south = '"uv": [0, 0, 6, 7], "texture": "#lantern"'; east = '"uv": [0, 0, 6, 7], "texture": "#lantern"'; west = '"uv": [0, 0, 6, 7], "texture": "#lantern"' } $glow))
-    $e.Add((New-Elem @(($lx - 1.2), 16.1, 12.8) @(($lx + 1.2), 16.5, 15.2) @{ north = '"uv": [8, 0, 16, 2], "texture": "#lantern"'; south = '"uv": [8, 0, 16, 2], "texture": "#lantern"'; east = '"uv": [8, 0, 16, 2], "texture": "#lantern"'; west = '"uv": [8, 0, 16, 2], "texture": "#lantern"'; down = '"uv": [8, 0, 16, 2], "texture": "#lantern"' }))
+$e.Add((New-Elem @(7.1, 14, 11.5) @(9.1, 18.5, 13.5) $cry ((Get-Rot 'y' 45 @(8.1, 14, 12.5)) + $glow)))
+$e.Add((New-Elem @(7.6, 12.8, 12) @(8.6, 14, 13) $cry ((Get-Rot 'y' 45 @(8.1, 12.8, 12.5)) + $glow)))
+# violet lanterns hanging from the arch beside the pillars
+$lchain = '"uv": [6, 0, 10, 4], "texture": "#chain"'
+$glass = '"uv": [0, 0, 6, 7], "texture": "#lantern"'
+$plate = '"uv": [8, 0, 16, 2], "texture": "#lantern"'
+foreach ($lx in @(4.6, 11.6)) {
+    $e.Add((New-Elem @(($lx - 0.4), 17.3, 14) @(($lx + 0.4), 19, 14) @{ north = $lchain; south = $lchain }))
+    $e.Add((New-Elem @(($lx - 0.9), 16.8, 13.1) @(($lx + 0.9), 17.3, 14.9) (Get-All 'lantern' @('north', 'south', 'east', 'west', 'up'))))
+    $e.Add((New-Elem @(($lx - 0.8), 14.6, 13.2) @(($lx + 0.8), 16.8, 14.8) @{ north = $glass; south = $glass; east = $glass; west = $glass } $glow))
+    $e.Add((New-Elem @(($lx - 1), 14.3, 13) @(($lx + 1), 14.6, 15) @{ north = $plate; south = $plate; east = $plate; west = $plate; down = $plate }))
 }
-# on the desk: a stack of books and an open book (left), quill and ink, crystals and a potion rack (right)
-$e.Add((New-Elem @(0.8, 12, 7.5) @(4.6, 13.6, 11.5) (Get-All 'book' @('north', 'south', 'east', 'west', 'up'))))
-$e.Add((New-Elem @(1.1, 13.6, 7.8) @(4.3, 15, 11.2) (Get-All 'book' @('north', 'south', 'east', 'west', 'up'))))
-$e.Add((New-Elem @(1.5, 12, 2.5) @(6.5, 12.6, 6.5) (Get-All 'book' @('north', 'south', 'east', 'west'))))
-$e.Add((New-Elem @(1.7, 12.6, 2.7) @(4, 13.3, 6.3) (Get-One 'up' 'pages' '"uv": [0, 0, 8, 16], ') (Get-Rot 'z' -22.5 @(4, 12.6, 4.5))))
-$e.Add((New-Elem @(4, 12.6, 2.7) @(6.3, 13.3, 6.3) (Get-One 'up' 'pages' '"uv": [8, 0, 16, 16], ') (Get-Rot 'z' 22.5 @(4, 12.6, 4.5))))
-$e.Add((New-Elem @(10.6, 12, 3) @(11.6, 13, 4) (Get-All 'dark' @('north', 'south', 'east', 'west', 'up'))))
-$e.Add((New-Elem @(11.2, 12.8, 3.4) @(11.4, 16, 3.6) (Get-All 'quill' @('north', 'south', 'east', 'west')) (Get-Rot 'z' -22.5 @(11.3, 12.8, 3.5))))
-$e.Add((New-Elem @(12.5, 12, 8.5) @(14, 16, 10) $cry ((Get-Rot 'y' 45 @(13.25, 12, 9.25)) + $glow)))
-$e.Add((New-Elem @(11.3, 12, 9.2) @(12.3, 14.5, 10.2) $cry ((Get-Rot 'z' 22.5 @(11.8, 12, 9.7)) + $glow)))
-$e.Add((New-Elem @(10.8, 12, 5) @(15, 12.6, 7.5) (Get-All 'wood' @('north', 'south', 'east', 'west', 'up'))))
-foreach ($px in @(11.3, 12.6, 13.9)) { $e.Add((New-Elem @($px, 12.6, 5.6) @(($px + 0.9), 14.2, 6.6) (Get-All 'potion' @('north', 'south', 'east', 'west', 'up')) $glow)) }
+# on the desk: books (left back), an open book (left front), crystals (right back), three potions (right front)
+$e.Add((New-Elem @(0.6, 11.6, 8) @(4, 13, 11.6) (Get-All 'book' @('north', 'south', 'east', 'west', 'up'))))
+$e.Add((New-Elem @(0.9, 13, 8.3) @(3.7, 14.1, 11.3) (Get-All 'book' @('north', 'south', 'east', 'west', 'up'))))
+$e.Add((New-Elem @(1.2, 11.8, 2) @(5.6, 12.3, 5.6) (Get-All 'book' @('north', 'south', 'east', 'west'))))
+$e.Add((New-Elem @(1.4, 12.3, 2.2) @(3.4, 12.9, 5.4) (Get-One 'up' 'pages' '"uv": [0, 0, 8, 16], ') (Get-Rot 'z' -22.5 @(3.4, 12.3, 3.8))))
+$e.Add((New-Elem @(3.4, 12.3, 2.2) @(5.4, 12.9, 5.4) (Get-One 'up' 'pages' '"uv": [8, 0, 16, 16], ') (Get-Rot 'z' 22.5 @(3.4, 12.3, 3.8))))
+$e.Add((New-Elem @(12.6, 11.8, 8.6) @(14.1, 15.6, 10.1) $cry ((Get-Rot 'y' 45 @(13.35, 11.8, 9.35)) + $glow)))
+$e.Add((New-Elem @(11.4, 11.8, 9.4) @(12.4, 14, 10.4) $cry ((Get-Rot 'z' 22.5 @(11.9, 11.8, 9.9)) + $glow)))
+foreach ($px in @(11, 12.4, 13.8)) {
+    $e.Add((New-Elem @($px, 11.8, 2.2) @(($px + 1.1), 13.6, 3.3) (Get-All 'potion' @('north', 'south', 'east', 'west', 'up')) $glow))
+    $e.Add((New-Elem @(($px + 0.3), 13.6, 2.5) @(($px + 0.8), 14.2, 3) (Get-All 'wood' @('north', 'south', 'east', 'west', 'up'))))
+}
 Out-Model 'models\block\rune_engraving_table.json' @"
     "particle": "forgebound:block/rune_table_stone",
     "stone": "forgebound:block/rune_table_stone",
@@ -165,7 +180,6 @@ Out-Model 'models\block\rune_engraving_table.json' @"
     "pages": "forgebound:block/rune_table_pages",
     "wood": "forgebound:block/rune_table_wood",
     "potion": "forgebound:block/rune_table_potion",
-    "quill": "forgebound:block/rune_table_quill",
     "gem": "forgebound:block/forge_anvil_gem"
 "@ $e
 "table: $($e.Count) elements"
