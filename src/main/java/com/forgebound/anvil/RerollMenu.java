@@ -54,7 +54,7 @@ public class RerollMenu extends AbstractContainerMenu {
         super(ModContent.REROLL_MENU.get(), id);
         this.access = access;
         this.player = inv.player;
-        addSlot(new Slot(container, GEAR, 26, 38) {
+        addSlot(new Slot(container, GEAR, 97, 44) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return GearType.isGear(stack);
@@ -65,12 +65,12 @@ public class RerollMenu extends AbstractContainerMenu {
                 return 1;
             }
         });
-        addSlot(material(DICE, 26, 78));
-        addSlot(material(ESSENCE, 48, 78));
-        addSlot(material(CRYSTAL, 70, 78));
-        addSlot(material(RUNE, 92, 78));
-        for (int r = 0; r < 3; r++) for (int c = 0; c < 9; c++) addSlot(new Slot(inv, c + r * 9 + 9, 8 + c * 18, INV_Y + r * 18));
-        for (int c = 0; c < 9; c++) addSlot(new Slot(inv, c, 8 + c * 18, INV_Y + 58));
+        addSlot(material(DICE, 82, 100));
+        addSlot(material(ESSENCE, 106, 100));
+        addSlot(material(CRYSTAL, 130, 100));
+        addSlot(material(RUNE, 154, 100));
+        for (int r = 0; r < 3; r++) for (int c = 0; c < 9; c++) addSlot(new Slot(inv, c + r * 9 + 9, 70 + c * 18, INV_Y + r * 18));
+        for (int c = 0; c < 9; c++) addSlot(new Slot(inv, c, 70 + c * 18, INV_Y + 58));
         addDataSlots(seals);
     }
 

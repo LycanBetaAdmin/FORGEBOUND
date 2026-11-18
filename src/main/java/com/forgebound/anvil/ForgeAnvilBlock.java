@@ -25,14 +25,14 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.joml.Vector3f;
 
 /**
- * The Forge Anvil: a dark steel anvil with antique gold trim and glowing blue runes. Right-click to raise a piece of
+ * The Forge Anvil: a violet steel anvil with a horn, gold bands, a glowing rune grid and glyph, and an amethyst gem. Right-click to raise a piece of
  * equipment's tier ({@link ForgeAnvilMenu}); like a crafting table it keeps nothing. Its long side faces the placer.
  */
 public class ForgeAnvilBlock extends HorizontalDirectionalBlock {
     public static final MapCodec<ForgeAnvilBlock> CODEC = simpleCodec(ForgeAnvilBlock::new);
     private static final VoxelShape SHAPE_X = Shapes.or(Block.box(1, 0, 2, 15, 4, 14), Block.box(4, 4, 5, 12, 10, 11), Block.box(0, 10, 3, 16, 16, 13));
     private static final VoxelShape SHAPE_Z = Shapes.or(Block.box(2, 0, 1, 14, 4, 15), Block.box(5, 4, 4, 11, 10, 12), Block.box(3, 10, 0, 13, 16, 16));
-    private static final DustParticleOptions RUNE = new DustParticleOptions(new Vector3f(0.3F, 0.76F, 0.97F), 0.7F);
+    private static final DustParticleOptions RUNE = new DustParticleOptions(new Vector3f(0.82F, 0.45F, 1.0F), 0.7F);
 
     public ForgeAnvilBlock(Properties properties) {
         super(properties);

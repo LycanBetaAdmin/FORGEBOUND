@@ -14,7 +14,7 @@ import net.minecraft.world.item.Items;
 import java.util.List;
 import java.util.Locale;
 
-import static com.forgebound.client.ForgeAnvilScreen.*;
+import static com.forgebound.client.ForgeUi.*;
 
 /**
  * The Ruinforged Crucible (FORGEBOUND's Disassembly Forge): gear over coal, a violet flame and progress arrow, and a
@@ -87,7 +87,7 @@ public class CrucibleScreen extends AbstractContainerScreen<CrucibleMenu> {
     @Override
     protected void renderBg(GuiGraphics g, float partial, int mouseX, int mouseY) {
         int x = leftPos, y = topPos, w = imageWidth, h = imageHeight;
-        EngraveScreen.panel(g, x, y, w, h, CrucibleMenu.INV_Y);
+        compactPanel(g, x, y, w, h, CrucibleMenu.INV_Y);
         g.fill(x + 6, y + INFO_Y - 3, x + w - 6, y + INFO_Y - 2, 0xFF5B3F7E);
         // furnace mouth glow and violet flame, burning down as the fuel runs out
         if (menu.lit()) g.fillGradient(x + FLAME_X - 3, y + FLAME_Y - 2, x + FLAME_X + FLAME + 3, y + FLAME_Y + FLAME + 1, 0x00000000, 0x60B060FF);

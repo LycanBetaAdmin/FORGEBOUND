@@ -31,7 +31,7 @@ import java.util.List;
  */
 public class EngraveMenu extends AbstractContainerMenu {
     public static final int GEAR = 0, SHARD = 1, SIZE = 2;
-    public static final int INV_Y = 132;
+    public static final int INV_Y = 178, INV_X = 70;
     public static final int BUTTON_TRANSFER_TAB = 101;
 
     private final ContainerLevelAccess access;
@@ -52,7 +52,7 @@ public class EngraveMenu extends AbstractContainerMenu {
         super(ModContent.ENGRAVE_MENU.get(), id);
         this.access = access;
         this.player = inv.player;
-        addSlot(new Slot(container, GEAR, 26, 38) {
+        addSlot(new Slot(container, GEAR, 97, 44) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return GearType.isGear(stack);
@@ -63,14 +63,14 @@ public class EngraveMenu extends AbstractContainerMenu {
                 return 1;
             }
         });
-        addSlot(new Slot(container, SHARD, 26, 82) {
+        addSlot(new Slot(container, SHARD, 88, 100) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return stack.is(ModContent.ARCANE_SHARD.get());
             }
         });
-        for (int r = 0; r < 3; r++) for (int c = 0; c < 9; c++) addSlot(new Slot(inv, c + r * 9 + 9, 8 + c * 18, INV_Y + r * 18));
-        for (int c = 0; c < 9; c++) addSlot(new Slot(inv, c, 8 + c * 18, INV_Y + 58));
+        for (int r = 0; r < 3; r++) for (int c = 0; c < 9; c++) addSlot(new Slot(inv, c + r * 9 + 9, 70 + c * 18, INV_Y + r * 18));
+        for (int c = 0; c < 9; c++) addSlot(new Slot(inv, c, 70 + c * 18, INV_Y + 58));
     }
 
     public static MenuProvider provider(Level level, BlockPos pos) {

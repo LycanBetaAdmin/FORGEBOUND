@@ -210,7 +210,7 @@ public final class TooltipFrame {
 
     static void draw(GuiGraphics g, int x, int y, int w, int h, int tierRgb) {
         int tierC = 0xFF000000 | tierRgb;
-        int tierDark = ForgeAnvilScreen.darker(tierC, 0.55);
+        int tierDark = ForgeUi.darker(tierC, 0.55);
         int x0 = x - 5, y0 = y - 5, x1 = x + w + 5, y1 = y + h + 5;
         g.pose().pushPose();
         g.pose().translate(0, 0, 399);
@@ -220,7 +220,7 @@ public final class TooltipFrame {
         g.fillGradient(x1 - 1, y0, x1, y1, tierC, tierDark);
         g.fill(x0, y0, x1, y0 + 1, tierC);
         g.fill(x0, y1 - 1, x1, y1, tierDark);
-        ForgeAnvilScreen.frame(g, x0 + 2, y0 + 2, x1 - x0 - 4, y1 - y0 - 4, SILVER);
+        ForgeUi.frame(g, x0 + 2, y0 + 2, x1 - x0 - 4, y1 - y0 - 4, SILVER);
         // corner ornaments: gold L-brackets with a tier-coloured stud, reaching a pixel outside the frame
         corner(g, x0 - 1, y0 - 1, 1, 1, tierC);
         corner(g, x1, y0 - 1, -1, 1, tierC);
@@ -292,8 +292,8 @@ public final class TooltipFrame {
         public void renderImage(Font font, int x, int y, GuiGraphics g) {
             int c = 0xFF000000 | h.tier().color();
             int bw = font.width(badge()) + 10;
-            g.fill(x, y + 1, x + bw, y + 12, ForgeAnvilScreen.darker(c, 0.25) | 0xFF000000);
-            ForgeAnvilScreen.frame(g, x, y + 1, bw, 11, c);
+            g.fill(x, y + 1, x + bw, y + 12, ForgeUi.darker(c, 0.25) | 0xFF000000);
+            ForgeUi.frame(g, x, y + 1, bw, 11, c);
             g.fill(x + 1, y + 2, x + 2, y + 3, GOLD);
             g.fill(x + bw - 2, y + 10, x + bw - 1, y + 11, GOLD);
             g.drawString(font, badge(), x + 5, y + 3, h.tier().color(), false);
@@ -321,7 +321,7 @@ public final class TooltipFrame {
         @Override
         public void renderImage(Font font, int x, int y, GuiGraphics g) {
             int c = 0xFF000000 | b.color();
-            int dim = ForgeAnvilScreen.darker(c, 0.5);
+            int dim = ForgeUi.darker(c, 0.5);
             int w = getWidth(font), tw = font.width(b.title());
             int bx0 = x + (w - tw) / 2 - 7, bx1 = x + (w + tw) / 2 + 7, my = y + 8;
             // ornament lines to either side, with a small diamond on each
@@ -330,8 +330,8 @@ public final class TooltipFrame {
             g.fill(bx0 - 4, my - 1, bx0 - 3, my + 2, c);
             g.fill(bx1 + 3, my - 1, bx1 + 4, my + 2, c);
             // the banner box
-            g.fill(bx0, y + 3, bx1, y + 14, ForgeAnvilScreen.darker(c, 0.18) | 0xFF000000);
-            ForgeAnvilScreen.frame(g, bx0, y + 3, bx1 - bx0, 11, c);
+            g.fill(bx0, y + 3, bx1, y + 14, ForgeUi.darker(c, 0.18) | 0xFF000000);
+            ForgeUi.frame(g, bx0, y + 3, bx1 - bx0, 11, c);
             g.drawString(font, b.title(), x + (w - tw) / 2, y + 5, b.color(), false);
         }
     }
@@ -357,7 +357,7 @@ public final class TooltipFrame {
         public void renderImage(Font font, int x, int y, GuiGraphics g) {
             int c = 0xFF000000 | d.color();
             int w = d.width(), mid = x + w / 2;
-            g.fill(x, y + 2, x + w, y + 3, ForgeAnvilScreen.darker(c, 0.45));
+            g.fill(x, y + 2, x + w, y + 3, ForgeUi.darker(c, 0.45));
             g.fill(mid - 1, y + 1, mid + 2, y + 4, c);
             g.fill(mid, y, mid + 1, y + 5, c);
         }

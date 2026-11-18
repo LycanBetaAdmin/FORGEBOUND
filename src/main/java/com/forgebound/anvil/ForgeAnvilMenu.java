@@ -33,7 +33,7 @@ import net.minecraft.world.item.Items;
  */
 public class ForgeAnvilMenu extends AbstractContainerMenu {
     public static final int GEAR = 0, SHARD = 1, METAL = 2, DUST = 3, CORE = 4, SIZE = 5;
-    public static final int INV_Y = 116;
+    public static final int INV_Y = 178, INV_X = 70;
 
     private final ContainerLevelAccess access;
     private final Player player;
@@ -56,7 +56,7 @@ public class ForgeAnvilMenu extends AbstractContainerMenu {
         super(ModContent.FORGE_ANVIL_MENU.get(), id);
         this.access = access;
         this.player = inv.player;
-        addSlot(new Slot(container, GEAR, 26, 38) {
+        addSlot(new Slot(container, GEAR, 97, 44) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return GearType.isGear(stack);
@@ -67,12 +67,12 @@ public class ForgeAnvilMenu extends AbstractContainerMenu {
                 return 1;
             }
         });
-        addSlot(material(SHARD, 26, 78));
-        addSlot(material(METAL, 48, 78));
-        addSlot(material(DUST, 70, 78));
-        addSlot(material(CORE, 92, 78));
-        for (int r = 0; r < 3; r++) for (int c = 0; c < 9; c++) addSlot(new Slot(inv, c + r * 9 + 9, 8 + c * 18, INV_Y + r * 18));
-        for (int c = 0; c < 9; c++) addSlot(new Slot(inv, c, 8 + c * 18, INV_Y + 58));
+        addSlot(material(SHARD, 82, 100));
+        addSlot(material(METAL, 106, 100));
+        addSlot(material(DUST, 130, 100));
+        addSlot(material(CORE, 154, 100));
+        for (int r = 0; r < 3; r++) for (int c = 0; c < 9; c++) addSlot(new Slot(inv, c + r * 9 + 9, 70 + c * 18, INV_Y + r * 18));
+        for (int c = 0; c < 9; c++) addSlot(new Slot(inv, c, 70 + c * 18, INV_Y + 58));
         addDataSlots(data);
         refresh();
     }

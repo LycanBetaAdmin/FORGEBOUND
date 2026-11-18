@@ -23,13 +23,13 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.joml.Vector3f;
 
 /**
- * The Rune Engraving Table: a dark wooden writing desk with gold trim, an open spellbook, violet crystals and a
- * glowing blue rune circle. Right-click to engrave enhancements ({@link EngraveMenu}) or move them ({@link TransferMenu}).
+ * The Rune Engraving Table: a violet stone altar with gold trim, a rune-circle runner, banners, glowing windows, books,
+ * crystals and potions, and two rune pillars holding an arch with a floating crystal and lanterns. Right-click to engrave enhancements ({@link EngraveMenu}) or move them ({@link TransferMenu}).
  */
 public class RuneTableBlock extends HorizontalDirectionalBlock {
     public static final MapCodec<RuneTableBlock> CODEC = simpleCodec(RuneTableBlock::new);
-    private static final VoxelShape SHAPE = Shapes.or(Block.box(0, 0, 0, 16, 2, 16), Block.box(1, 2, 1, 15, 11, 15), Block.box(0, 11, 0, 16, 13, 16));
-    private static final DustParticleOptions RUNE = new DustParticleOptions(new Vector3f(0.3F, 0.76F, 0.97F), 0.6F);
+    private static final VoxelShape SHAPE = Shapes.or(Block.box(0, 0, 0.5, 16, 2, 15.5), Block.box(1, 2, 1.5, 15, 10, 14.5), Block.box(0, 10, 0, 16, 12, 16));
+    private static final DustParticleOptions RUNE = new DustParticleOptions(new Vector3f(0.82F, 0.45F, 1.0F), 0.6F);
 
     public RuneTableBlock(Properties properties) {
         super(properties);
@@ -73,7 +73,7 @@ public class RuneTableBlock extends HorizontalDirectionalBlock {
         double cx = pos.getX() + 0.5, cz = pos.getZ() + 0.5;
         if (random.nextInt(2) == 0) {
             double a = random.nextDouble() * Math.PI * 2;
-            level.addParticle(RUNE, cx + Math.cos(a) * 0.3, pos.getY() + 0.85, cz + Math.sin(a) * 0.3, 0, 0.01, 0);
+            level.addParticle(RUNE, cx + Math.cos(a) * 0.3, pos.getY() + 0.8, cz - 0.15 + Math.sin(a) * 0.3, 0, 0.01, 0);
         }
         if (random.nextInt(4) == 0) {
             level.addParticle(ParticleTypes.ENCHANT, cx + (random.nextDouble() - 0.5), pos.getY() + 1.6, cz + (random.nextDouble() - 0.5),

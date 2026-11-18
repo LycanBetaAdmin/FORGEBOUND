@@ -49,22 +49,22 @@ public class TransferMenu extends AbstractContainerMenu {
     public TransferMenu(int id, Inventory inv, ContainerLevelAccess access) {
         super(ModContent.TRANSFER_MENU.get(), id);
         this.access = access;
-        addSlot(gearSlot(SOURCE, 26, 38));
-        addSlot(gearSlot(TARGET, 134, 38));
-        addSlot(new Slot(container, SHARD, 26, 82) {
+        addSlot(gearSlot(SOURCE, 88, 44));
+        addSlot(gearSlot(TARGET, 150, 44));
+        addSlot(new Slot(container, SHARD, 88, 100) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return stack.is(ModContent.ARCANE_SHARD.get());
             }
         });
-        addSlot(new Slot(container, DUST, 48, 82) {
+        addSlot(new Slot(container, DUST, 110, 100) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return stack.is(ModContent.CRYSTAL_DUST.get());
             }
         });
-        for (int r = 0; r < 3; r++) for (int c = 0; c < 9; c++) addSlot(new Slot(inv, c + r * 9 + 9, 8 + c * 18, INV_Y + r * 18));
-        for (int c = 0; c < 9; c++) addSlot(new Slot(inv, c, 8 + c * 18, INV_Y + 58));
+        for (int r = 0; r < 3; r++) for (int c = 0; c < 9; c++) addSlot(new Slot(inv, c + r * 9 + 9, 70 + c * 18, INV_Y + r * 18));
+        for (int c = 0; c < 9; c++) addSlot(new Slot(inv, c, 70 + c * 18, INV_Y + 58));
     }
 
     private Slot gearSlot(int index, int x, int y) {
