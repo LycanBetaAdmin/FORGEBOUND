@@ -1,6 +1,5 @@
-# Generates FORGEBOUND's small item icons (Arcane Shard, Soul Essence, Fortune Crystal) and the Sundered effect icon.
-# Crystal Dust, Ascension Core, Fortune Dice, Sealing Rune, raw metals and ingots come from gen_forgebound_refs.ps1;
-# the Forge Anvil, ores and the Rune Engraving Table from gen_forgebound_blocks.ps1.
+# Generates FORGEBOUND's Sundered effect icon. All item icons now come from gen_forgebound_refs.ps1; the Forge Anvil,
+# ores and the Rune Engraving Table from gen_forgebound_blocks.ps1.
 # Run: powershell -File tools\texgen\gen_forgebound.ps1
 Add-Type -AssemblyName System.Drawing
 $root = Join-Path $PSScriptRoot '..\..\src\main\resources\assets\forgebound\textures'
@@ -36,70 +35,6 @@ $pals = @{
     infernalite = @{ o = '#3A0A04'; d = '#7A1B08'; m = '#C43A14'; l = '#FF7A33'; h = '#FFD49A' }
     voidsteel   = @{ o = '#08060F'; d = '#231A3A'; m = '#3F3168'; l = '#7C66C6'; h = '#DCD0FF' }
 }
-
-
-# ---- Arcane Shard: a tall blue crystal with a small one beside it
-$shard = @(
-    '................',
-    '..........oo....',
-    '.........ohho...',
-    '........ohllo...',
-    '.......ohlmmo...',
-    '......ohlmmdo...',
-    '.....ohlmmdo....',
-    '....ohlmmdo.....',
-    '...ohlmmdo..oo..',
-    '..ohlmmdo..ohlo.',
-    '..olmmdo...olmo.',
-    '..odddo.....odo.',
-    '...ooo.......o..',
-    '................',
-    '................',
-    '................')
-$b = New-Tex; Write-Mask $b $shard @{ o = '#0B2350'; d = '#1B4F99'; m = '#2E86E0'; l = '#7FC8FF'; h = '#F2FBFF' }; Save-Tex $b $itemDir 'arcane_shard'
-
-
-
-
-# ---- Soul Essence: a pale teal wisp curling up from a glowing core
-$wisp = @(
-    '................',
-    '.........hh.....',
-    '........hlh.....',
-    '.......hll......',
-    '......hlm.......',
-    '......lmm..h....',
-    '.....lmmd.hl....',
-    '....lmmdd.lm....',
-    '....mmdddlmm....',
-    '...lmdddddmml...',
-    '...mddhhhddmm...',
-    '...mddhhhddml...',
-    '....mddhhddm....',
-    '.....mmdddm.....',
-    '......mmmm......',
-    '................')
-$b = New-Tex; Write-Mask $b $wisp @{ d = '#1F8C8C'; m = '#3FC4C0'; l = '#9CF0EA'; h = '#F2FFFD' }; Save-Tex $b $itemDir 'soul_essence'
-
-# ---- Fortune Crystal: a faceted rose-gold gem with a bright glint
-$gem = @(
-    '................',
-    '................',
-    '.....oooooo.....',
-    '....ohhllmmo....',
-    '...ohhllmmmdo...',
-    '..oooooooooooo..',
-    '..ohhlllmmmmdo..',
-    '...ohllmmmmdo...',
-    '....ohlmmmdo....',
-    '.....ohmmdo.....',
-    '......omdo......',
-    '.......oo.......',
-    '................',
-    '................',
-    '................',
-    '................')
-$b = New-Tex; Write-Mask $b $gem @{ o = '#7A3A1A'; d = '#C2603A'; m = '#F09A6A'; l = '#FFD08A'; h = '#FFF4D6' } 1; Set-Px $b 5 5 '#FFFFFF'; Save-Tex $b $itemDir 'fortune_crystal'
 
 
 # ---- Sundered effect icon (18 x 18): a cracked steel plate

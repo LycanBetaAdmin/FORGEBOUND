@@ -149,8 +149,22 @@ Add-T @(10, 13, -0.15) @(22, 13.2, 1) @{ up = (Get-Face 'runner' @(0, 0, 12, 1.1
 Add-T @(10, 1.2, -0.15) @(22, 13.2, -0.15) @{ north = (Get-Face 'drape' @(0, 0, 12, 12)) } $soft
 Add-T @(11, 13.21, 2) @(21, 13.22, 12) @{ up = (Get-Face 'circle' @(0, 0, 10, 10)) } $glow
 
-# ---- the floating amethyst in its gold ring
-Add-TCross 16 15 7 11 12 '[0, 0, 11, 12]' 'amethyst' $glow
+# ---- the floating crystal: a smooth faceted gem (tapered boxes turned 45 degrees, a soft gradient on every face, normal
+# face shading so the facets read) with two smaller crystals leaning out beside it, all held in the gold ring
+$gemLight = ', "neoforge_data": {"block_light": 13, "sky_light": 15}'
+# profile: (bottom, top) as fractions of the height, half-width as a fraction of the full half-width
+$gemProfile = @(); foreach ($k in 0..4) { $gemProfile += ,@((0.3 * $k / 5), (0.3 * ($k + 1) / 5), (0.18 + 0.82 * ($k + 0.5) / 5)) }; $gemProfile += ,@(0.3, 0.66, 1.0); foreach ($k in 0..6) { $gemProfile += ,@((0.66 + 0.34 * $k / 7), (0.66 + 0.34 * ($k + 1) / 7), (1.0 - 0.88 * ($k + 0.5) / 7)) }
+function Add-TGem([double]$cx, [double]$y0, [double]$cz, [double]$w, [double]$h, [string]$rot = 'y45', [double]$tilt = 0) {
+    foreach ($s in $gemProfile) {
+        $hw = $w / 2 * $s[2]; $ya = $y0 + $h * $s[0]; $yb = $y0 + $h * $s[1]
+        $faces = @{}; foreach ($f in $sides) { $faces[$f] = $(if ($f -in 'up', 'down') { '"uv": [5, 5, 11, 11], "texture": "#cgem"' } else { '"uv": [0, 0, 16, 16], "texture": "#cgem"' }) }
+        $r = if ($rot -eq 'y45') { Get-TRot 'y' 45 @($cx, $y0, $cz) } else { Get-TRot 'z' $tilt @($cx, $y0, $cz) }
+        Add-T @(($cx - $hw), $ya, ($cz - $hw)) @(($cx + $hw), $yb, ($cz + $hw)) $faces ($r + $gemLight)
+    }
+}
+Add-TGem 16 15.2 7 4.6 11.5
+Add-TGem 13.6 16.4 7 2.2 6 'z' 22.5
+Add-TGem 18.4 16.4 7 2.2 6 'z' -22.5
 foreach ($r in @(@(12, 20, 3, 3.6), @(12, 20, 10.4, 11), @(12, 12.6, 3.6, 10.4), @(19.4, 20, 3.6, 10.4))) {
     Add-TPlain 'gold' 4 4 @($r[0], 17.6, $r[2]) @($r[1], 18.2, $r[3])
 }
@@ -218,8 +232,11 @@ foreach ($p in @(@(22.6, 1.4, 3, 0), @(23.4, 5.2, 2, 4))) {
     Add-TPlain 'potion' 10 0 @($nx, $ny, $nz) @(($nx + 1), ($ny + 0.8), ($nz + 1)) '' @('north', 'south', 'east', 'west')
     Add-TPlain 'wood' 2 2 @(($nx - 0.1), ($ny + 0.8), ($nz - 0.1)) @(($nx + 1.1), ($ny + 1.4), ($nz + 1.1)) '' @('north', 'south', 'east', 'west', 'up')
 }
-Add-TCross 24 13 10 7 7 '[9, 0, 16, 7]' 'crystal' $glow
-Add-TCross 8.6 13 10.6 5 4 '[9, 8, 14, 12]' 'crystal' $glow
+Add-TGem 24 13 10.2 2.4 6.5
+Add-TGem 22.6 13 10.6 1.4 3.6 'z' 22.5
+Add-TGem 25.3 13 9.6 1.4 3.2 'z' -22.5
+Add-TGem 8.6 13 10.6 1.8 4
+Add-TGem 7.4 13 11 1.1 2.4 'z' 22.5
 
 $tableTex = @"
     "particle": "forgebound:block/rune_table_stone",
@@ -231,7 +248,7 @@ $tableTex = @"
     "circle": "forgebound:block/rune_table_circle",
     "glow": "forgebound:block/rune_table_glow",
     "plaque": "forgebound:block/rune_table_plaque",
-    "amethyst": "forgebound:block/rune_table_amethyst",
+    "cgem": "forgebound:block/rune_table_gem",
     "crystal": "forgebound:block/rune_table_crystal",
     "lantern": "forgebound:block/rune_table_lantern",
     "chain": "forgebound:block/rune_table_chain",

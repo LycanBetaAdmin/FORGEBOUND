@@ -75,9 +75,14 @@ Convert-Ref 'ingot_voidsteel' 'voidsteel_ingot' 32 @(, @(2, 1, 6, 6)) $ramps.voi
 Convert-Ref 'raw_verdantite' 'raw_verdantite' 32 @() $ramps.verdantite
 Convert-Ref 'raw_infernalite' 'raw_infernalite' 32 @() $ramps.infernalite 0.35 1.2
 Convert-Ref 'raw_voidsteel' 'raw_voidsteel' 32 @(, @(32, 0, 32, 30)) $ramps.voidsteel
-# ---- Fortune Dice (teal d20) and Crystal Dust (red heap), as drawn
+# ---- Fortune Dice (gold-set teal d20, as drawn) and Crystal Dust (the reference heap recoloured violet)
 Convert-Ref 'fortune_dice' 'fortune_dice' 32
-Convert-Ref 'crystal_dust' 'crystal_dust' 16
+Convert-Ref 'crystal_dust' 'crystal_dust' 16 @() @('#1A0A2A', '#2A1240', '#5B2A8C', '#8C4FD0', '#C08CF5', '#F6E8FF')
+# ---- 1.3: Fortune Crystal, Arcane Shard, Fortune Dice and Soul Essence from the item icons of the reference sheets
+# (painted art, reduced to 32x32 pixel art with Downscale.java), used as drawn
+Convert-Ref 'fortune_crystal' 'fortune_crystal' 32
+Convert-Ref 'arcane_shard' 'arcane_shard' 32
+Convert-Ref 'soul_essence' 'soul_essence' 32
 
 # ---- Ascension Core: a faceted violet orb with a bright star, a tilted gold ring wrapping round it, gold settings with
 # violet gems on top, bottom and the ring, and a few floating motes

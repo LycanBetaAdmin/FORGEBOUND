@@ -200,22 +200,21 @@ Write-Mask $b @(
     '.gyyyyg.',
     '..gggg..') @{ g = '#8C6420'; y = '#F2C04E'; k = '#241A36'; r = '#E07CFF'; h = '#FFE6FF' } 0 0
 Save-Tex $b $blockDir 'rune_table_plaque'
-# large amethyst (11x12) for the floating centrepiece, vanilla amethyst palette
+# smooth gem (every crystal on the table): a soft light-to-deep violet gradient across each face with a bright edge
+# line on the lit side and a faint glowing band through the middle
 $b = New-Tex
-Write-Mask $b @(
-    '.....h.....',
-    '....tlm....',
-    '....lkd....',
-    '..t.lkd.t..',
-    '..lmlkdmd..',
-    't.lmlkdmd.t',
-    'lmlklkdmdmd',
-    '.lklmmddmd.',
-    '.lklmmdmdx.',
-    '..lmmddmx..',
-    '...mmddx...',
-    '....mdx....') @{ h = '#FFFDD5'; t = '#FECBE6'; l = '#CFA0F3'; k = '#B38EF3'; m = '#8D6ACC'; d = '#7A5BB5'; x = '#64479E' } 0 0
-Save-Tex $b $blockDir 'rune_table_amethyst'
+$stops = @(@(0, 244, 226, 255), @(0.2, 220, 176, 255), @(0.55, 168, 104, 240), @(0.85, 124, 50, 198), @(1, 92, 30, 160))
+for ($y = 0; $y -lt 16; $y++) {
+    for ($x = 0; $x -lt 16; $x++) {
+        $t = $x / 15; $k = 0; while ($t -gt $stops[$k + 1][0]) { $k++ }
+        $f = ($t - $stops[$k][0]) / ($stops[$k + 1][0] - $stops[$k][0])
+        $glowRow = [Math]::Max(0, 1 - [Math]::Abs($y - 7.5) / 4) * 22
+        $c = 1..3 | ForEach-Object { [int][Math]::Min(255, $stops[$k][$_] + ($stops[$k + 1][$_] - $stops[$k][$_]) * $f + $glowRow) }
+        if ($x -eq 1) { $c = @(255, 246, 255) }
+        $b.SetPixel($x, $y, [System.Drawing.Color]::FromArgb(255, $c[0], $c[1], $c[2]))
+    }
+}
+Save-Tex $b $blockDir 'rune_table_gem'
 # books: (0,0) 4x5 violet cover, (4,0) 3x4 crimson cover, (0,6) 5x2 violet spine, (0,9) 4x2 crimson spine,
 # (8..15, 0..7) violet leather, (8..15, 8..13) crimson leather, row 15 page edges
 $b = New-Tex
