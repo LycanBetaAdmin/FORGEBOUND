@@ -190,7 +190,7 @@ Add-T @(($fx1 - $ft), $fy, ($fz0 + $ft)) @($fx1, ($fy + $fh), ($fz1 - $ft)) @{ e
 Add-T @(15.3, ($fy - 0.2), ($fz0 - 0.3)) @(16.7, ($fy + 1.4), $fz0) (Get-Plain 'band' 11 0 @(15.3, ($fy - 0.2), ($fz0 - 0.3)) @(16.7, ($fy + 1.4), $fz0))
 Add-T @(15.6, ($fy + 0.2), ($fz0 - 0.5)) @(16.4, ($fy + 1), ($fz0 - 0.3)) @{ north = '"uv": [12, 5, 14, 7], "texture": "#band"'; east = '"uv": [12, 5, 12.2, 7], "texture": "#band"'; west = '"uv": [12, 5, 12.2, 7], "texture": "#band"'; up = '"uv": [12, 5, 14, 5.2], "texture": "#band"'; down = '"uv": [12, 5, 14, 5.2], "texture": "#band"' } $glow
 # small floating crystals (the same gem, small)
-foreach ($c in @(@(9.8, 22.4, 4.6), @(22.2, 23, 5), @(9.4, 17.4, 9.4), @(22.6, 17, 9.8), @(11.2, 14.4, 2.8), @(20.8, 14.8, 3))) {
+foreach ($c in @(@(11.8, 21.6, 5.2), @(20.2, 22, 5.6), @(11.6, 17.2, 8.6), @(20.4, 16.8, 9), @(12.6, 15.4, 4.4), @(19.4, 15.6, 4.6))) {
     Add-SpriteCrystal $c[0] $c[1] $c[2] 0.14
 }
 
@@ -217,16 +217,16 @@ foreach ($lx in @(8, 24)) {
 }
 
 # ---- right (X 1..9): a gold book stand holding an open book, tilted towards the reader
-Add-TPlain 'gold' 2 2 @(3.5, 13, 3.5) @(7.5, 13.6, 7.5) '' @('north', 'south', 'east', 'west', 'up')
+Add-TPlain 'gold' 2 2 @(3, 13, 3) @(8, 13.6, 8) '' @('north', 'south', 'east', 'west', 'up')
 Add-TPlain 'gold' 2 2 @(5, 13.6, 5) @(6, 16, 6) '' @('north', 'south', 'east', 'west')
 $tilt = Get-TRot 'x' -22.5 @(5.5, 16, 5.5)
-Add-TPlain 'gold' 2 2 @(2.3, 16, 2.3) @(8.7, 16.4, 8.7) $tilt
-Add-TPlain 'book' 8 0 @(2.6, 16.4, 2.6) @(8.4, 16.8, 8.4) $tilt @('north', 'south', 'east', 'west', 'up')
-$pg = Get-Plain 'pages' 0 6 @(2.9, 16.8, 2.9) @(5.5, 17.4, 8.1) @('north', 'south', 'west'); $pg['up'] = (Get-Face 'pages' @(0, 0, 2.6, 5.2))
-Add-T @(2.9, 16.8, 2.9) @(5.5, 17.4, 8.1) $pg $tilt
-$pg = Get-Plain 'pages' 0 6 @(5.5, 16.8, 2.9) @(8.1, 17.4, 8.1) @('north', 'south', 'east'); $pg['up'] = (Get-Face 'pages' @(3, 0, 5.6, 5.2))
-Add-T @(5.5, 16.8, 2.9) @(8.1, 17.4, 8.1) $pg ($tilt + $soft)
-Add-TPlain 'book' 8 8 @(6.6, 15.2, 2.75) @(7.1, 17.42, 2.95) $tilt @('north', 'east', 'west', 'up')
+Add-TPlain 'gold' 2 2 @(1.5, 16, 1.5) @(9.5, 16.4, 9.5) $tilt
+Add-TPlain 'book' 8 0 @(1.8, 16.4, 1.8) @(9.2, 16.8, 9.2) $tilt @('north', 'south', 'east', 'west', 'up')
+$pg = Get-Plain 'pages' 0 6 @(2.1, 16.8, 2.1) @(5.5, 17.5, 8.9) @('north', 'south', 'west'); $pg['up'] = (Get-Face 'pages' @(0, 0, 3, 6))
+Add-T @(2.1, 16.8, 2.1) @(5.5, 17.5, 8.9) $pg $tilt
+$pg = Get-Plain 'pages' 0 6 @(5.5, 16.8, 2.1) @(8.9, 17.5, 8.9) @('north', 'south', 'east'); $pg['up'] = (Get-Face 'pages' @(3, 0, 6, 6))
+Add-T @(5.5, 16.8, 2.1) @(8.9, 17.5, 8.9) $pg ($tilt + $soft)
+Add-TPlain 'book' 8 8 @(7.4, 15, 1.95) @(7.9, 17.52, 2.15) $tilt @('north', 'east', 'west', 'up')
 
 # a closed book lying flat, spine to the west: covers, page block and a banded spine
 function Add-TBook([double]$x, [double]$y, [double]$z, [double]$w, [double]$d, [double[]]$cover, [double[]]$plain, [double[]]$spine, [string]$rot = '') {
