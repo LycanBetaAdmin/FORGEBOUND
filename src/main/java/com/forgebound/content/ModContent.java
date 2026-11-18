@@ -9,7 +9,10 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.valueproviders.UniformInt;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.MenuType;
@@ -48,6 +51,7 @@ public final class ModContent {
     private static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(Forgebound.MODID);
     private static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Forgebound.MODID);
     private static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(Registries.MENU, Forgebound.MODID);
+    private static final DeferredRegister<MobEffect> EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT, Forgebound.MODID);
     private static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Forgebound.MODID);
     private static final DeferredRegister<MapCodec<? extends IGlobalLootModifier>> LOOT_MODIFIERS =
             DeferredRegister.create(NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, Forgebound.MODID);
@@ -78,6 +82,25 @@ public final class ModContent {
                 }
             });
 
+    // ---- reroll materials (phase 2)
+    /** Main reroll catalyst: crafted. */
+    public static final DeferredItem<Item> FORTUNE_DICE = item("fortune_dice", Rarity.UNCOMMON);
+    /** Required for every reroll: rare drop from hostile mobs, several from bosses. */
+    public static final DeferredItem<Item> SOUL_ESSENCE = item("soul_essence", Rarity.UNCOMMON);
+    /** Premium reroll (skips the base pool): bosses sometimes drop one. */
+    public static final DeferredItem<Item> FORTUNE_CRYSTAL = ITEMS.register("fortune_crystal",
+            () -> new Item(new Item.Properties().rarity(Rarity.EPIC)) {
+                @Override
+                public boolean isFoil(ItemStack stack) {
+                    return true;
+                }
+            });
+    /** Seals one Unique Attribute during a reroll: high-level dungeon chests. */
+    public static final DeferredItem<Item> SEALING_RUNE = item("sealing_rune", Rarity.RARE);
+
+    /** Armor Breaker's debuff. */
+    public static final DeferredHolder<MobEffect, MobEffect> SUNDERED = EFFECTS.register("sundered", com.forgebound.unique.SunderedEffect::new);
+
     // ---- Forge Anvil
     public static final DeferredBlock<ForgeAnvilBlock> FORGE_ANVIL = BLOCKS.register("forge_anvil", () -> new ForgeAnvilBlock(
             BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).strength(5.0F, 1200.0F).requiresCorrectToolForDrops()
@@ -85,6 +108,8 @@ public final class ModContent {
     public static final DeferredItem<BlockItem> FORGE_ANVIL_ITEM = ITEMS.registerSimpleBlockItem(FORGE_ANVIL);
     public static final DeferredHolder<MenuType<?>, MenuType<ForgeAnvilMenu>> FORGE_ANVIL_MENU =
             MENUS.register("forge_anvil", () -> new MenuType<>(ForgeAnvilMenu::new, FeatureFlags.VANILLA_SET));
+    public static final DeferredHolder<MenuType<?>, MenuType<com.forgebound.anvil.RerollMenu>> REROLL_MENU =
+            MENUS.register("forge_anvil_reroll", () -> new MenuType<>(com.forgebound.anvil.RerollMenu::new, FeatureFlags.VANILLA_SET));
 
     public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<ChestTierModifier>> CHEST_TIERS =
             LOOT_MODIFIERS.register("chest_tiers", () -> ChestTierModifier.CODEC);
@@ -96,7 +121,7 @@ public final class ModContent {
                 out.accept(FORGE_ANVIL_ITEM.get());
                 for (Supplier<? extends ItemLike> s : List.<Supplier<? extends ItemLike>>of(VERDANTITE_ORE, DEEPSLATE_VERDANTITE_ORE, INFERNALITE_ORE, VOIDSTEEL_ORE,
                         RAW_VERDANTITE, VERDANTITE_INGOT, RAW_INFERNALITE, INFERNALITE_INGOT, RAW_VOIDSTEEL, VOIDSTEEL_INGOT,
-                        ARCANE_SHARD, CRYSTAL_DUST, ASCENSION_CORE)) {
+                        ARCANE_SHARD, CRYSTAL_DUST, ASCENSION_CORE, FORTUNE_DICE, SOUL_ESSENCE, FORTUNE_CRYSTAL, SEALING_RUNE)) {
                     out.accept(s.get());
                 }
             }).build());
@@ -121,14 +146,38 @@ public final class ModContent {
         MENUS.register(modBus);
         TABS.register(modBus);
         LOOT_MODIFIERS.register(modBus);
+        EFFECTS.register(modBus);
     }
 
-    /** Bosses drop 1-2 Ascension Cores. */
+    /**
+     * Bosses drop 1-2 Ascension Cores, 4-8 Soul Essence and sometimes a Fortune Crystal; other hostile mobs killed by a
+     * player sometimes drop a Soul Essence (Looting raises the chance).
+     */
     @SubscribeEvent
     public static void onDrops(LivingDropsEvent event) {
         var entity = event.getEntity();
-        if (entity.level().isClientSide() || !entity.getType().is(BOSSES)) return;
-        int n = 1 + entity.getRandom().nextInt(2);
-        event.getDrops().add(new ItemEntity(entity.level(), entity.getX(), entity.getY() + 0.5, entity.getZ(), new ItemStack(ASCENSION_CORE.get(), n)));
+        if (entity.level().isClientSide()) return;
+        var rng = entity.getRandom();
+        var cfg = com.forgebound.ForgeboundConfig.get();
+        if (entity.getType().is(BOSSES)) {
+            drop(event, new ItemStack(ASCENSION_CORE.get(), 1 + rng.nextInt(2)));
+            drop(event, new ItemStack(SOUL_ESSENCE.get(), 4 + rng.nextInt(5)));
+            if (rng.nextDouble() < cfg.bossCrystalChance) drop(event, new ItemStack(FORTUNE_CRYSTAL.get()));
+            return;
+        }
+        if (entity instanceof Enemy && event.getSource().getEntity() instanceof Player) {
+            int looting = 0;
+            var reg = entity.level().registryAccess().registryOrThrow(Registries.ENCHANTMENT);
+            var holder = reg.getHolder(net.minecraft.world.item.enchantment.Enchantments.LOOTING);
+            if (holder.isPresent() && event.getSource().getEntity() instanceof Player p) {
+                looting = net.minecraft.world.item.enchantment.EnchantmentHelper.getItemEnchantmentLevel(holder.get(), p.getMainHandItem());
+            }
+            if (rng.nextDouble() < cfg.soulEssenceChance + cfg.soulEssenceLootingBonus * looting) drop(event, new ItemStack(SOUL_ESSENCE.get()));
+        }
+    }
+
+    private static void drop(LivingDropsEvent event, ItemStack stack) {
+        var e = event.getEntity();
+        event.getDrops().add(new ItemEntity(e.level(), e.getX(), e.getY() + 0.5, e.getZ(), stack));
     }
 }

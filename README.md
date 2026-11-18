@@ -28,8 +28,15 @@ Forge Anvil with dimensional metals and reforge materials.
 - **RPG Items Tiers**: replaced. Its items are converted on load (Common T1, Rare T3, Epic T4, Legendary T5,
   Mythic T6, Divine T7).
 
+## Phase 2
+- **Unique Attributes**: 34 random effects (13 weapon, 11 armor, 10 tool) stored on the item (`forgebound:unique`); one
+  slot, two at T6-T7. Strength scales with tier (+10% per tier). Pools: base (any tier), rarer (T3+), top (T5+), 60/30/10.
+- **Reroll** (Forge Anvil, Reroll tab): Fortune Dice + Soul Essence by tier; a Fortune Crystal skips the base pool;
+  one Sealing Rune per attribute kept.
+- **Materials**: Fortune Dice (crafted: gold, bones, Arcane Shard), Soul Essence (hostile mobs, 2% + Looting; bosses 4-8),
+  Fortune Crystal (bosses, 35%), Sealing Rune (stronghold library, ancient city, End City, bastion, mansion, ominous vaults).
+
 ## Planned
-2. Unique Attributes and rerolling (Fortune Dice, Soul Essence, Fortune Crystal, Sealing Rune)
 3. Rune Engraving Table: enhancements and transfer
 4. Disassembly Forge (the Ruinforged Crucible)
 5. Apotheosis integration and the custom tooltip frame

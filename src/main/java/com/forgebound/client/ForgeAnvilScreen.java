@@ -49,6 +49,10 @@ public class ForgeAnvilScreen extends AbstractContainerScreen<ForgeAnvilMenu> {
 
     @Override
     public boolean mouseClicked(double mx, double my, int button) {
+        if (button == 0 && tabAt(mx, my, leftPos, topPos) == 1 && minecraft != null && minecraft.gameMode != null) {
+            minecraft.gameMode.handleInventoryButtonClick(menu.containerId, ForgeAnvilMenu.BUTTON_REROLL_TAB);
+            return true;
+        }
         if (button == 0 && overButton(mx, my) && menu.blocked() == null && minecraft != null && minecraft.gameMode != null) {
             minecraft.gameMode.handleInventoryButtonClick(menu.containerId, 0);
             minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.SMITHING_TABLE_USE, 1.0F));
@@ -102,10 +106,8 @@ public class ForgeAnvilScreen extends AbstractContainerScreen<ForgeAnvilMenu> {
         }
         ForgeAnvilMenu.Cost cost = menu.cost();
         Tier next = cost == null ? cur : cost.to();
-        g.drawString(font, cur.label(), PREVIEW_X, PREVIEW_Y, 0xFFFFFF, false);
-        if (cost != null) {
-            g.drawString(font, "»", PREVIEW_X + font.width(cur.label()) + 3, PREVIEW_Y, GOLD_LIGHT & 0xFFFFFF, false);
-        }
+        int lw = fitted(g, font, cur.label(), PREVIEW_X, PREVIEW_Y, imageWidth - 18 - PREVIEW_X);
+        if (cost != null) g.drawString(font, "»", PREVIEW_X + lw + 3, PREVIEW_Y, GOLD_LIGHT & 0xFFFFFF, false);
         int y = PREVIEW_Y + 11;
         double dmg = sum(gear, true), armor = sum(gear, false);
         ForgeboundConfig cfg = ForgeboundConfig.get();
@@ -161,6 +163,7 @@ public class ForgeAnvilScreen extends AbstractContainerScreen<ForgeAnvilMenu> {
     @Override
     protected void renderBg(GuiGraphics g, float partial, int mx, int my) {
         int x = leftPos, y = topPos, w = imageWidth, h = imageHeight;
+        drawTabs(g, x, y, 0, mx, my);
         // obsidian body, double gold frame with corner studs
         g.fill(x, y, x + w, y + h, 0xFF06040A);
         g.fillGradient(x + 1, y + 1, x + w - 1, y + h - 1, OBSIDIAN_2, OBSIDIAN);
@@ -203,7 +206,7 @@ public class ForgeAnvilScreen extends AbstractContainerScreen<ForgeAnvilMenu> {
         g.fill(leftPos + s.x, topPos + s.y, leftPos + s.x + 16, topPos + s.y + 16, 0xB8201A2A);
     }
 
-    private static void slot(GuiGraphics g, int x, int y, boolean big) {
+    static void slot(GuiGraphics g, int x, int y, boolean big) {
         int grow = big ? 2 : 0;
         int x0 = x - grow, y0 = y - grow, x1 = x + 18 + grow, y1 = y + 18 + grow;
         g.fill(x0, y0, x1, y1, big ? 0xFF3A2A52 : 0xFF2E2638);
@@ -213,6 +216,57 @@ public class ForgeAnvilScreen extends AbstractContainerScreen<ForgeAnvilMenu> {
         g.fill(x1 - 1, y0 + 1, x1, y1, big ? GOLD : 0xFF6E5E84);
     }
 
+    // ------------------------------------------------------------------ tabs (Reforge / Reroll)
+
+    static final int TAB_W = 26, TAB_H = 20;
+
+    /** Tab index under the mouse (0 = Reforge, 1 = Reroll), or -1. Tabs hang off the left edge of the panel. */
+    static int tabAt(double mx, double my, int left, int top) {
+        for (int i = 0; i < 2; i++) {
+            int x = left - TAB_W + 2, y = top + 18 + i * (TAB_H + 3);
+            if (mx >= x && mx < x + TAB_W && my >= y && my < y + TAB_H) return i;
+        }
+        return -1;
+    }
+
+    static void drawTabs(GuiGraphics g, int left, int top, int active, int mx, int my) {
+        ItemStack[] icons = {new ItemStack(ModContent.FORGE_ANVIL_ITEM.get()), new ItemStack(ModContent.FORTUNE_DICE.get())};
+        for (int i = 0; i < 2; i++) {
+            int x = left - TAB_W + 2, y = top + 18 + i * (TAB_H + 3);
+            boolean on = i == active, hover = tabAt(mx, my, left, top) == i;
+            g.fill(x, y, x + TAB_W, y + TAB_H, on ? OBSIDIAN_2 : hover ? 0xFF241C30 : 0xFF140F1C);
+            frame(g, x, y, TAB_W, TAB_H, on ? GOLD : GOLD_DARK);
+            if (on) g.fill(x + TAB_W - 2, y + 1, x + TAB_W, y + TAB_H - 1, OBSIDIAN_2);
+            g.renderItem(icons[i], x + 6, y + 2);
+        }
+    }
+
+    @Override
+    public void renderTooltip(GuiGraphics g, int mx, int my) {
+        int tab = tabAt(mx, my, leftPos, topPos);
+        if (tab >= 0) {
+            g.renderTooltip(font, Component.translatable(tab == 0 ? "screen.forgebound.tab.reforge" : "screen.forgebound.tab.reroll"), mx, my);
+            return;
+        }
+        super.renderTooltip(g, mx, my);
+    }
+
+    /** Draws text, shrunk to fit {@code maxW} when it is wider; returns the width it took. */
+    static int fitted(GuiGraphics g, net.minecraft.client.gui.Font font, Component text, int x, int y, int maxW) {
+        int w = font.width(text);
+        if (w <= maxW) {
+            g.drawString(font, text, x, y, 0xFFFFFF, false);
+            return w;
+        }
+        float s = Math.max(0.5F, (float) maxW / w);
+        g.pose().pushPose();
+        g.pose().translate(x, y + (1 - s) * 4, 0);
+        g.pose().scale(s, s, 1);
+        g.drawString(font, text, 0, 0, 0xFFFFFF, false);
+        g.pose().popPose();
+        return (int) (w * s);
+    }
+
     static void frame(GuiGraphics g, int x, int y, int w, int h, int color) {
         g.fill(x, y, x + w, y + 1, color);
         g.fill(x, y + h - 1, x + w, y + h, color);
@@ -220,7 +274,7 @@ public class ForgeAnvilScreen extends AbstractContainerScreen<ForgeAnvilMenu> {
         g.fill(x + w - 1, y, x + w, y + h, color);
     }
 
-    private static void ring(GuiGraphics g, int cx, int cy, int r, int color) {
+    static void ring(GuiGraphics g, int cx, int cy, int r, int color) {
         for (int a = 0; a < 360; a += 6) {
             double rad = Math.toRadians(a);
             int px = cx + (int) Math.round(Math.cos(rad) * r), py = cy + (int) Math.round(Math.sin(rad) * r);

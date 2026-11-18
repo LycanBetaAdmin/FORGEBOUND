@@ -134,6 +134,86 @@ foreach ($p in @(@(7, 1), @(8, 1), @(7, 14), @(8, 14), @(1, 7), @(1, 8), @(14, 7
 Set-Px $b 6 5 '#FFFFFF'; Set-Px $b 5 6 '#E8FCFF'
 Save-Tex $b $itemDir 'ascension_core'
 
+# ---- Fortune Dice: an ivory die with gold edges, seen corner-on (top face and two sides with pips)
+$die = @(
+    '................',
+    '..oooooooooooo..',
+    '.ohhhhhhhhhhhlo.',
+    '.ohpphhhhhhpplo.',
+    '.ohpphhhhhhpplo.',
+    '.ohhhhhhhhhhhlo.',
+    '.ohhhhhpphhhhlo.',
+    '.ohhhhhpphhhhlo.',
+    '.ohhhhhhhhhhhlo.',
+    '.ohpphhhhhhpplo.',
+    '.ohpphhhhhhpplo.',
+    '.ohhhhhhhhhhhlo.',
+    '.olllllllllllmo.',
+    '..oooooooooooo..',
+    '................',
+    '................')
+$b = New-Tex; Write-Mask $b $die @{ o = '#8C6420'; h = '#FFF6DC'; l = '#DCCBA0'; m = '#B8A478'; p = '#B8862B' }
+Save-Tex $b $itemDir 'fortune_dice'
+
+# ---- Soul Essence: a pale teal wisp curling up from a glowing core
+$wisp = @(
+    '................',
+    '.........hh.....',
+    '........hlh.....',
+    '.......hll......',
+    '......hlm.......',
+    '......lmm..h....',
+    '.....lmmd.hl....',
+    '....lmmdd.lm....',
+    '....mmdddlmm....',
+    '...lmdddddmml...',
+    '...mddhhhddmm...',
+    '...mddhhhddml...',
+    '....mddhhddm....',
+    '.....mmdddm.....',
+    '......mmmm......',
+    '................')
+$b = New-Tex; Write-Mask $b $wisp @{ d = '#1F8C8C'; m = '#3FC4C0'; l = '#9CF0EA'; h = '#F2FFFD' }; Save-Tex $b $itemDir 'soul_essence'
+
+# ---- Fortune Crystal: a faceted rose-gold gem with a bright glint
+$gem = @(
+    '................',
+    '................',
+    '.....oooooo.....',
+    '....ohhllmmo....',
+    '...ohhllmmmdo...',
+    '..oooooooooooo..',
+    '..ohhlllmmmmdo..',
+    '...ohllmmmmdo...',
+    '....ohlmmmdo....',
+    '.....ohmmdo.....',
+    '......omdo......',
+    '.......oo.......',
+    '................',
+    '................',
+    '................',
+    '................')
+$b = New-Tex; Write-Mask $b $gem @{ o = '#7A3A1A'; d = '#C2603A'; m = '#F09A6A'; l = '#FFD08A'; h = '#FFF4D6' } 1; Set-Px $b 5 5 '#FFFFFF'; Save-Tex $b $itemDir 'fortune_crystal'
+
+# ---- Sealing Rune: a dark stone tablet with a glowing gold seal glyph
+$b = New-Tex
+for ($y = 2; $y -lt 15; $y++) {
+    for ($x = 3; $x -lt 13; $x++) {
+        $edge = ($x -eq 3 -or $x -eq 12 -or $y -eq 2 -or $y -eq 14)
+        if ($edge) { Set-Px $b $x $y '#1E1828' } else { Set-Px $b $x $y (Get-Pick @('#3A3046', '#433852', '#332A3E') @(4, 3, 3)) }
+    }
+}
+foreach ($p in @(@(7, 4), @(8, 4), @(6, 5), @(9, 5), @(5, 7), @(10, 7), @(5, 8), @(10, 8), @(6, 10), @(9, 10), @(7, 11), @(8, 11))) { Set-Px $b $p[0] $p[1] '#D6A84B' }
+foreach ($p in @(@(7, 6), @(8, 6), @(7, 7), @(8, 7), @(7, 8), @(8, 8), @(7, 9), @(8, 9))) { Set-Px $b $p[0] $p[1] '#FFE08A' }
+Save-Tex $b $itemDir 'sealing_rune'
+
+# ---- Sundered effect icon (18 x 18): a cracked steel plate
+$effDir = Join-Path $root 'mob_effect'; New-Item -ItemType Directory -Force $effDir | Out-Null
+$b = New-Object System.Drawing.Bitmap 18, 18, ([System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+for ($y = 3; $y -lt 15; $y++) { for ($x = 3; $x -lt 15; $x++) { $b.SetPixel($x, $y, (Get-Col ($(if ($x -eq 3 -or $y -eq 3) { '#B8B0C4' } elseif ($x -eq 14 -or $y -eq 14) { '#4A4456' } else { '#8A8296' })))) } }
+foreach ($p in @(@(9, 3), @(9, 4), @(8, 5), @(8, 6), @(9, 7), @(10, 8), @(10, 9), @(9, 10), @(8, 11), @(8, 12), @(7, 13), @(7, 14), @(11, 9), @(12, 10))) { $b.SetPixel($p[0], $p[1], (Get-Col '#2A2333')) }
+$b.Save((Join-Path $effDir 'sundered.png'), [System.Drawing.Imaging.ImageFormat]::Png); $b.Dispose()
+
 # ---- ore overlays: clusters of metal specks (transparent elsewhere)
 $clusters = @(@(2, 2), @(9, 3), @(5, 7), @(11, 9), @(3, 11), @(8, 12), @(12, 1))
 foreach ($metal in 'verdantite', 'infernalite', 'voidsteel') {

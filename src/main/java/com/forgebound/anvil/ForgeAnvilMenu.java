@@ -178,8 +178,26 @@ public class ForgeAnvilMenu extends AbstractContainerMenu {
         return null;
     }
 
+    public static final int BUTTON_REROLL_TAB = 101;
+
+    /** Opens the Reforge tab (the anvil's default). */
+    public static net.minecraft.world.MenuProvider provider(net.minecraft.world.level.Level level, net.minecraft.core.BlockPos pos) {
+        return new net.minecraft.world.SimpleMenuProvider((id, inv, p) -> new ForgeAnvilMenu(id, inv, ContainerLevelAccess.create(level, pos)),
+                Component.translatable("block.forgebound.forge_anvil"));
+    }
+
+    /** Opens the Reroll tab. */
+    public static net.minecraft.world.MenuProvider rerollProvider(net.minecraft.world.level.Level level, net.minecraft.core.BlockPos pos) {
+        return new net.minecraft.world.SimpleMenuProvider((id, inv, p) -> new RerollMenu(id, inv, ContainerLevelAccess.create(level, pos)),
+                Component.translatable("block.forgebound.forge_anvil"));
+    }
+
     @Override
     public boolean clickMenuButton(Player p, int id) {
+        if (id == BUTTON_REROLL_TAB && p instanceof ServerPlayer sp) {
+            access.execute((level, pos) -> sp.openMenu(rerollProvider(level, pos)));
+            return true;
+        }
         if (id != 0 || !(p instanceof ServerPlayer)) return false;
         refresh();
         if (blocked() != null) return false;

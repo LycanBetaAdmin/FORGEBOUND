@@ -75,6 +75,49 @@ public final class ForgeboundConfig {
     @SerializedName("start_tiers")
     public Map<String, Integer> startTiers = new LinkedHashMap<>(Map.of("eldoria", 5));
 
+    // ---- Unique Attributes (phase 2)
+
+    @SerializedName("unique_scale_per_tier")
+    public double uniqueScalePerTier = 0.10;
+
+    /** Reroll cost per tier T1..T7: Fortune Dice and Soul Essence. */
+    @SerializedName("reroll_fortune_dice")
+    public int[] rerollDice = {1, 1, 1, 1, 1, 2, 2};
+
+    @SerializedName("reroll_soul_essence")
+    public int[] rerollEssence = {2, 2, 4, 4, 8, 12, 16};
+
+    /** Chance weights of the base / rarer (T3+) / top (T5+) attribute pools. */
+    @SerializedName("unique_pool_weights")
+    public double[] poolWeights = {60, 30, 10};
+
+    @SerializedName("soul_essence_drop_chance")
+    public double soulEssenceChance = 0.02;
+
+    @SerializedName("soul_essence_looting_bonus")
+    public double soulEssenceLootingBonus = 0.01;
+
+    @SerializedName("boss_fortune_crystal_chance")
+    public double bossCrystalChance = 0.35;
+
+    @SerializedName("second_chance_cooldown_seconds")
+    public int secondChanceCooldown = 600;
+
+    public int rerollDice(int tier) {
+        return (int) at(toDouble(rerollDice), tier, 1);
+    }
+
+    public int rerollEssence(int tier) {
+        return (int) at(toDouble(rerollEssence), tier, 2);
+    }
+
+    private static double[] toDouble(int[] a) {
+        if (a == null) return null;
+        double[] d = new double[a.length];
+        for (int i = 0; i < a.length; i++) d[i] = a[i];
+        return d;
+    }
+
     public static ForgeboundConfig get() {
         return instance;
     }
@@ -105,6 +148,7 @@ public final class ForgeboundConfig {
             if (Files.exists(file)) {
                 ForgeboundConfig read = GSON.fromJson(Files.readString(file, StandardCharsets.UTF_8), ForgeboundConfig.class);
                 if (read != null) cfg = fill(read);
+                Files.writeString(file, GSON.toJson(cfg), StandardCharsets.UTF_8); // adds keys new in this version
             } else {
                 Files.createDirectories(file.getParent());
                 Files.writeString(file, GSON.toJson(cfg), StandardCharsets.UTF_8);
@@ -126,6 +170,11 @@ public final class ForgeboundConfig {
         if (read.startTiers == null) read.startTiers = d.startTiers;
         if (read.nonBlacksmithCostMultiplier < 1) read.nonBlacksmithCostMultiplier = d.nonBlacksmithCostMultiplier;
         if (read.nonBlacksmithMaxTier < 1) read.nonBlacksmithMaxTier = d.nonBlacksmithMaxTier;
+        if (read.rerollDice == null || read.rerollDice.length < 7) read.rerollDice = d.rerollDice;
+        if (read.rerollEssence == null || read.rerollEssence.length < 7) read.rerollEssence = d.rerollEssence;
+        if (read.poolWeights == null || read.poolWeights.length < 3) read.poolWeights = d.poolWeights;
+        if (read.uniqueScalePerTier < 0) read.uniqueScalePerTier = d.uniqueScalePerTier;
+        if (read.secondChanceCooldown <= 0) read.secondChanceCooldown = d.secondChanceCooldown;
         return read;
     }
 }

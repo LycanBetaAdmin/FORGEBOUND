@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": ["GBG", "BSB", "GBG"],
+  "key": {
+    "G": {"item": "minecraft:gold_ingot"},
+    "B": {"item": "minecraft:bone"},
+    "S": {"item": "forgebound:arcane_shard"}
+  },
+  "result": {"id": "forgebound:fortune_dice", "count": 1}
+}

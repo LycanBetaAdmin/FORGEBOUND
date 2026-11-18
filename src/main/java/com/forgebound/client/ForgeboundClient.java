@@ -23,6 +23,7 @@ public final class ForgeboundClient {
         @SubscribeEvent
         public static void onScreens(RegisterMenuScreensEvent event) {
             event.register(ModContent.FORGE_ANVIL_MENU.get(), ForgeAnvilScreen::new);
+            event.register(ModContent.REROLL_MENU.get(), RerollScreen::new);
         }
     }
 
@@ -33,7 +34,18 @@ public final class ForgeboundClient {
         public static void onTooltip(ItemTooltipEvent event) {
             if (!GearType.isGear(event.getItemStack())) return;
             List<Component> lines = event.getToolTip();
-            lines.add(Math.min(1, lines.size()), Tiers.get(event.getItemStack()).label());
+            var stack = event.getItemStack();
+            var tier = Tiers.get(stack);
+            int at = Math.min(1, lines.size());
+            lines.add(at++, tier.label());
+            var attrs = com.forgebound.unique.Uniques.get(stack);
+            if (!attrs.isEmpty()) {
+                lines.add(at++, Component.translatable("tooltip.forgebound.unique").withColor(0xD6A84B));
+                for (var a : attrs) {
+                    lines.add(at++, Component.literal(" ").append(a.displayName()));
+                    lines.add(at++, Component.literal("   ").append(a.description(tier.level())));
+                }
+            }
         }
     }
 }

@@ -67,8 +67,7 @@ public class ForgeAnvilBlock extends HorizontalDirectionalBlock {
 
     @Override
     protected MenuProvider getMenuProvider(BlockState state, Level level, BlockPos pos) {
-        return new SimpleMenuProvider((id, inv, p) -> new ForgeAnvilMenu(id, inv, ContainerLevelAccess.create(level, pos)),
-                Component.translatable("block.forgebound.forge_anvil"));
+        return ForgeAnvilMenu.provider(level, pos);
     }
 
     /** Blue rune motes drifting off the anvil face. */
