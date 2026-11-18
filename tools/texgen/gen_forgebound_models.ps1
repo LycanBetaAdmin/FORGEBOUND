@@ -110,8 +110,9 @@ $e.Add((New-Elem @(-0.5, 9.6, 0) @(16.5, 11.6, 16) (Get-All 'stone')))
 foreach ($c in @(@(-0.6, -0.1), @(13.1, -0.1), @(-0.6, 12.6), @(13.1, 12.6))) {
     $e.Add((New-Elem @($c[0], 11.5, $c[1]) @(($c[0] + 3.5), 11.9, ($c[1] + 3.5)) (Get-All 'gold' @('north', 'south', 'east', 'west', 'up'))))
 }
-$e.Add((New-Elem @(1.5, 11.6, 0.6) @(14.5, 11.8, 12.4) (Get-All 'runner' @('up', 'north', 'south', 'east', 'west'))))
-$e.Add((New-Elem @(2.5, 11.81, 1.1) @(13.5, 11.82, 12.1) (Get-One 'up' 'circle' $full) $glow))
+$runSide = '"uv": [12, 0, 16, 0.2], "texture": "#runner"'
+$e.Add((New-Elem @(2, 11.6, 0.8) @(14, 11.8, 13.2) @{ up = '"uv": [0, 0, 12, 12.4], "texture": "#runner"'; north = $runSide; east = $runSide; west = $runSide }))
+$e.Add((New-Elem @(3, 11.81, 3) @(13, 11.82, 13) (Get-One 'up' 'circle' '"uv": [0, 0, 10, 10], ') $glow))
 # two banners over the front edge, their runes glowing
 foreach ($bx in @(2.4, 9.6)) {
     $e.Add((New-Elem @($bx, 3.2, -0.15) @(($bx + 4), 11.8, -0.1) (Get-One 'north' 'banner' $full) ', "shade": false, "neoforge_data": {"block_light": 11, "sky_light": 15}'))
@@ -119,49 +120,88 @@ foreach ($bx in @(2.4, 9.6)) {
 }
 # back pillars: gold base and cap, one tall glowing window each
 foreach ($x in @(0.5, 12.5)) {
-    $e.Add((New-Elem @($x, 11.6, 12.5) @(($x + 3), 20.5, 15.5) (Get-All 'stone')))
+    $e.Add((New-Elem @($x, 11.6, 12.5) @(($x + 3), 23, 15.5) (Get-All 'stone')))
     $e.Add((New-Elem @(($x - 0.2), 11.6, 12.3) @(($x + 3.2), 12.6, 15.7) (Get-All 'gold' @('north', 'south', 'east', 'west', 'up'))))
-    $e.Add((New-Elem @(($x - 0.3), 20.5, 12.2) @(($x + 3.3), 21.8, 15.8) (Get-All 'gold')))
-    $e.Add((New-Elem @(($x + 0.8), 13.6, 12.45) @(($x + 2.2), 19.5, 12.5) (Get-One 'north' 'window' $full) $glow))
+    $e.Add((New-Elem @(($x - 0.3), 23, 12.2) @(($x + 3.3), 24.3, 15.8) (Get-All 'gold')))
+    $e.Add((New-Elem @(($x + 0.8), 14.1, 12.45) @(($x + 2.2), 22, 12.5) (Get-One 'north' 'window' $full) $glow))
 }
 # the stepped arch with the rune plaque in front
-$e.Add((New-Elem @(3.5, 19, 13) @(12.5, 20.5, 15) (Get-All 'stone')))
-$e.Add((New-Elem @(5, 20.5, 13.2) @(11, 21.5, 14.8) (Get-All 'stone')))
-$e.Add((New-Elem @(3.4, 18.8, 12.9) @(12.6, 19.2, 15.1) (Get-All 'gold' @('north', 'south', 'down'))))
-$e.Add((New-Elem @(6, 19.2, 12.6) @(10, 23.2, 12.9) (Get-All 'gold' @('south', 'east', 'west', 'up', 'down'))))
-$e.Add((New-Elem @(6, 19.2, 12.55) @(10, 23.2, 12.6) (Get-One 'north' 'plaque' $full) $glow))
-# the crystal hanging under the arch in a gold ring, on two chains
-$chain = '"uv": [6, 0, 10, 11], "texture": "#chain"'
-foreach ($cx in @(6.2, 9.8)) {
-    $e.Add((New-Elem @(($cx - 0.5), 16.2, 12.5) @(($cx + 0.5), 19, 12.5) @{ north = $chain; south = $chain }))
+$e.Add((New-Elem @(3.5, 21.5, 13) @(12.5, 23, 15) (Get-All 'stone')))
+$e.Add((New-Elem @(5, 23, 13.2) @(11, 24, 14.8) (Get-All 'stone')))
+$e.Add((New-Elem @(3.4, 21.3, 12.9) @(12.6, 21.7, 15.1) (Get-All 'gold' @('north', 'south', 'down'))))
+$e.Add((New-Elem @(6, 21.7, 12.6) @(10, 25.7, 12.9) (Get-All 'gold' @('south', 'east', 'west', 'up', 'down'))))
+$e.Add((New-Elem @(6, 21.7, 12.55) @(10, 25.7, 12.6) (Get-One 'north' 'plaque' $full) $glow))
+# amethyst: crossed planes like vanilla amethyst clusters (sprite size = plane size, so pixels match the table's)
+function Add-Cross([double]$cx, [double]$y0, [double]$cz, [double]$w, [double]$h, [string]$uv, [string]$tex, [string]$extra = '') {
+    $f = "`"uv`": $uv, `"texture`": `"#$tex`""
+    foreach ($a in @(45, -45)) {
+        $e.Add((New-Elem @(($cx - $w / 2), $y0, $cz) @(($cx + $w / 2), ($y0 + $h), $cz) @{ north = $f; south = $f } ((Get-Rot 'y' $a @($cx, $y0, $cz)) + $extra)))
+    }
 }
-foreach ($r in @(@(5.6, 10.6, 10.2, 10.6), @(5.6, 10.6, 14.4, 14.8), @(5.6, 6, 10.6, 14.4), @(10.2, 10.6, 10.6, 14.4))) {
-    $e.Add((New-Elem @($r[0], 15.8, $r[2]) @($r[1], 16.2, $r[3]) (Get-All 'gold') (Get-Rot 'y' 45 @(8.1, 16, 12.5))))
+# a uniform patch of a texture on every face, sized to each face (for trims, covers, glass)
+function Get-Plain([string]$tex, [double]$u, [double]$v, [double[]]$from, [double[]]$to, [string[]]$only = $sides) {
+    $dx = $to[0] - $from[0]; $dy = $to[1] - $from[1]; $dz = $to[2] - $from[2]; $h = @{}
+    foreach ($s in $only) {
+        $w, $hh = switch ($s) { { $_ -in 'north', 'south' } { $dx, $dy } { $_ -in 'east', 'west' } { $dz, $dy } default { $dx, $dz } }
+        $h[$s] = "`"uv`": $(Format-V @($u, $v, ($u + $w), ($v + $hh))), `"texture`": `"#$tex`""
+    }
+    return $h
 }
-$cry = Get-All 'crystal' @('north', 'south', 'east', 'west', 'up', 'down')
-$e.Add((New-Elem @(7.1, 14, 11.5) @(9.1, 18.5, 13.5) $cry ((Get-Rot 'y' 45 @(8.1, 14, 12.5)) + $glow)))
-$e.Add((New-Elem @(7.6, 12.8, 12) @(8.6, 14, 13) $cry ((Get-Rot 'y' 45 @(8.1, 12.8, 12.5)) + $glow)))
+function Add-Plain([string]$tex, [double]$u, [double]$v, [double[]]$from, [double[]]$to, [string]$extra = '', [string[]]$only = $sides) {
+    $e.Add((New-Elem $from $to (Get-Plain $tex $u $v $from $to $only) $extra))
+}
+# the floating amethyst cluster over the magic circle, held in a gold ring
+Add-Cross 8 13.2 8 9 9 '[0, 0, 9, 9]' 'crystal' $glow
+foreach ($r in @(@(5, 11, 5, 5.5), @(5, 11, 10.5, 11), @(5, 5.5, 5.5, 10.5), @(10.5, 11, 5.5, 10.5))) {
+    Add-Plain 'gold' 4 4 @($r[0], 15.2, $r[2]) @($r[1], 15.7, $r[3])
+}
 # violet lanterns hanging from the arch beside the pillars
 $lchain = '"uv": [6, 0, 10, 4], "texture": "#chain"'
 $glass = '"uv": [0, 0, 6, 7], "texture": "#lantern"'
 $plate = '"uv": [8, 0, 16, 2], "texture": "#lantern"'
 foreach ($lx in @(4.6, 11.6)) {
-    $e.Add((New-Elem @(($lx - 0.4), 17.3, 14) @(($lx + 0.4), 19, 14) @{ north = $lchain; south = $lchain }))
-    $e.Add((New-Elem @(($lx - 0.9), 16.8, 13.1) @(($lx + 0.9), 17.3, 14.9) (Get-All 'lantern' @('north', 'south', 'east', 'west', 'up'))))
-    $e.Add((New-Elem @(($lx - 0.8), 14.6, 13.2) @(($lx + 0.8), 16.8, 14.8) @{ north = $glass; south = $glass; east = $glass; west = $glass } $glow))
-    $e.Add((New-Elem @(($lx - 1), 14.3, 13) @(($lx + 1), 14.6, 15) @{ north = $plate; south = $plate; east = $plate; west = $plate; down = $plate }))
+    $e.Add((New-Elem @(($lx - 0.4), 19.8, 14) @(($lx + 0.4), 21.5, 14) @{ north = $lchain; south = $lchain }))
+    $e.Add((New-Elem @(($lx - 0.9), 19.3, 13.1) @(($lx + 0.9), 19.8, 14.9) (Get-All 'lantern' @('north', 'south', 'east', 'west', 'up'))))
+    $e.Add((New-Elem @(($lx - 0.8), 17.1, 13.2) @(($lx + 0.8), 19.3, 14.8) @{ north = $glass; south = $glass; east = $glass; west = $glass } $glow))
+    $e.Add((New-Elem @(($lx - 1), 16.8, 13) @(($lx + 1), 17.1, 15) @{ north = $plate; south = $plate; east = $plate; west = $plate; down = $plate }))
 }
-# on the desk: books (left back), an open book (left front), crystals (right back), three potions (right front)
-$e.Add((New-Elem @(0.6, 11.6, 8) @(4, 13, 11.6) (Get-All 'book' @('north', 'south', 'east', 'west', 'up'))))
-$e.Add((New-Elem @(0.9, 13, 8.3) @(3.7, 14.1, 11.3) (Get-All 'book' @('north', 'south', 'east', 'west', 'up'))))
-$e.Add((New-Elem @(1.2, 11.8, 2) @(5.6, 12.3, 5.6) (Get-All 'book' @('north', 'south', 'east', 'west'))))
-$e.Add((New-Elem @(1.4, 12.3, 2.2) @(3.4, 12.9, 5.4) (Get-One 'up' 'pages' '"uv": [0, 0, 8, 16], ') (Get-Rot 'z' -22.5 @(3.4, 12.3, 3.8))))
-$e.Add((New-Elem @(3.4, 12.3, 2.2) @(5.4, 12.9, 5.4) (Get-One 'up' 'pages' '"uv": [8, 0, 16, 16], ') (Get-Rot 'z' 22.5 @(3.4, 12.3, 3.8))))
-$e.Add((New-Elem @(12.6, 11.8, 8.6) @(14.1, 15.6, 10.1) $cry ((Get-Rot 'y' 45 @(13.35, 11.8, 9.35)) + $glow)))
-$e.Add((New-Elem @(11.4, 11.8, 9.4) @(12.4, 14, 10.4) $cry ((Get-Rot 'z' 22.5 @(11.9, 11.8, 9.9)) + $glow)))
-foreach ($px in @(11, 12.4, 13.8)) {
-    $e.Add((New-Elem @($px, 11.8, 2.2) @(($px + 1.1), 13.6, 3.3) (Get-All 'potion' @('north', 'south', 'east', 'west', 'up')) $glow))
-    $e.Add((New-Elem @(($px + 0.3), 13.6, 2.5) @(($px + 0.8), 14.2, 3) (Get-All 'wood' @('north', 'south', 'east', 'west', 'up'))))
+# a closed book lying flat, spine to the west: two covers, the page block between them and a banded spine
+function Add-Book([double]$x, [double]$y, [double]$z, [double]$w, [double]$d, [double[]]$cover, [double[]]$plain, [double[]]$spine, [string]$rot = '') {
+    Add-Plain 'book' $plain[0] $plain[1] @($x, $y, $z) @(($x + $w), ($y + 0.5), ($z + $d)) $rot @('north', 'south', 'east', 'west', 'down')
+    Add-Plain 'book' 0 12 @(($x + 0.4), ($y + 0.5), ($z + 0.3)) @(($x + $w - 0.3), ($y + 1.5), ($z + $d - 0.3)) $rot @('north', 'south', 'east')
+    $top = Get-Plain 'book' $plain[0] $plain[1] @($x, ($y + 1.5), $z) @(($x + $w), ($y + 2), ($z + $d)) @('north', 'south', 'east', 'west')
+    $top['up'] = "`"uv`": $(Format-V @($cover[0], $cover[1], ($cover[0] + $w), ($cover[1] + $d))), `"texture`": `"#book`""
+    $e.Add((New-Elem @($x, ($y + 1.5), $z) @(($x + $w), ($y + 2), ($z + $d)) $top $rot))
+    $e.Add((New-Elem @(($x - 0.1), ($y + 0.05), $z) @(($x + 0.4), ($y + 1.95), ($z + $d)) @{ west = "`"uv`": $(Format-V @($spine[0], $spine[1], ($spine[0] + $d), ($spine[1] + 2))), `"texture`": `"#book`"" } $rot))
+}
+# on the desk. Left: two tomes (back) and two purple candles (front)
+Add-Book -0.2 11.6 6.4 3 4 @(0, 0) @(8, 0) @(0, 5)
+Add-Book 0.3 13.6 6.9 2 3 @(4, 0) @(8, 8) @(6, 5) (Get-Rot 'y' 22.5 @(1.3, 13.6, 8.4))
+foreach ($c in @(@(0.2, 1.4, 3), @(0.8, 3.8, 2))) {
+    $cx = $c[0]; $cz = $c[1]; $ch = $c[2]; $top = 11.6 + $ch
+    $side = "`"uv`": [0, 8, 2, $(Format-N (8 + $ch))], `"texture`": `"#candle`""
+    $e.Add((New-Elem @($cx, 11.6, $cz) @(($cx + 2), $top, ($cz + 2)) @{ north = $side; south = $side; east = $side; west = $side; up = '"uv": [0, 6, 2, 8], "texture": "#candle"' }))
+    Add-Cross ($cx + 1) $top ($cz + 1) 1 1 '[0, 5, 1, 6]' 'candle'
+    Add-Cross ($cx + 1) ($top + 0.6) ($cz + 1) 1 2 '[14, 8, 15, 10]' 'crystal' $glow
+}
+# front centre: the open book (leather cover, two page blocks, a crimson ribbon)
+Add-Plain 'book' 8 0 @(4.6, 11.8, 0.9) @(11.4, 12.2, 4.3)
+$pg = Get-Plain 'pages' 0 4 @(5, 12.2, 1.2) @(8, 12.8, 4.2) @('north', 'south', 'west')
+$pg['up'] = '"uv": [0, 0, 3, 3], "texture": "#pages"'
+$e.Add((New-Elem @(5, 12.2, 1.2) @(8, 12.8, 4.2) $pg))
+$pg = Get-Plain 'pages' 0 4 @(8, 12.2, 1.2) @(11, 12.8, 4.2) @('north', 'south', 'east')
+$pg['up'] = '"uv": [3, 0, 6, 3], "texture": "#pages"'
+$e.Add((New-Elem @(8, 12.2, 1.2) @(11, 12.8, 4.2) $pg))
+Add-Plain 'book' 8 8 @(9.4, 11.85, 1.0) @(9.9, 12.82, 1.2) '' @('north', 'east', 'west', 'up')
+# right: amethyst cluster and bud (back), two potions (front)
+Add-Cross 13.9 11.6 10.2 7 7 '[9, 0, 16, 7]' 'crystal' $glow
+Add-Cross 11.6 11.8 11.6 5 4 '[9, 8, 14, 12]' 'crystal' $glow
+foreach ($p in @(@(12.8, 0.9, 3, 0), @(13.4, 4.4, 2, 4), @(11.4, 4.8, 2, 7))) {
+    $px = $p[0]; $pz = $p[1]; $s = $p[2]; $u = $p[3]
+    Add-Plain 'potion' $u 0 @($px, 11.6, $pz) @(($px + $s), (11.6 + $s), ($pz + $s)) $glow @('north', 'south', 'east', 'west', 'up')
+    $nx = $px + $s / 2 - 0.5; $nz = $pz + $s / 2 - 0.5; $ny = 11.6 + $s
+    Add-Plain 'potion' 10 0 @($nx, $ny, $nz) @(($nx + 1), ($ny + 0.8), ($nz + 1)) '' @('north', 'south', 'east', 'west')
+    Add-Plain 'wood' 2 2 @(($nx - 0.1), ($ny + 0.8), ($nz - 0.1)) @(($nx + 1.1), ($ny + 1.4), ($nz + 1.1)) '' @('north', 'south', 'east', 'west', 'up')
 }
 Out-Model 'models\block\rune_engraving_table.json' @"
     "particle": "forgebound:block/rune_table_stone",
@@ -180,6 +220,7 @@ Out-Model 'models\block\rune_engraving_table.json' @"
     "pages": "forgebound:block/rune_table_pages",
     "wood": "forgebound:block/rune_table_wood",
     "potion": "forgebound:block/rune_table_potion",
+    "candle": "minecraft:block/white_candle",
     "gem": "forgebound:block/forge_anvil_gem"
 "@ $e
 "table: $($e.Count) elements"
@@ -202,7 +243,7 @@ Out-Model 'models\block\rune_engraving_table.json' @"
 {
   "parent": "forgebound:block/rune_engraving_table",
   "display": {
-    "gui": {"rotation": [30, 225, 0], "translation": [0, -2.5, 0], "scale": [0.42, 0.42, 0.42]},
+    "gui": {"rotation": [30, 225, 0], "translation": [0, -3.2, 0], "scale": [0.39, 0.39, 0.39]},
     "ground": {"rotation": [0, 0, 0], "translation": [0, 3, 0], "scale": [0.2, 0.2, 0.2]},
     "fixed": {"rotation": [0, 0, 0], "translation": [0, -2, 0], "scale": [0.38, 0.38, 0.38]},
     "thirdperson_righthand": {"rotation": [75, 45, 0], "translation": [0, 2.5, 0], "scale": [0.3, 0.3, 0.3]},

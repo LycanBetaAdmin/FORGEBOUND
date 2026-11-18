@@ -1,7 +1,7 @@
 # Generates FORGEBOUND's metal items and block textures into src/main/resources/assets/forgebound/textures:
 #   item/  raw_<metal> (a crystal cluster on grey stone) and <metal>_ingot (a rimmed bar with an emblem)
 #   block/ <metal>_ore_overlay, the Forge Anvil (violet steel, gold bands, rune grid, glyph, gem) and the Rune Engraving
-#          Table (stone, gold trim, runner, magic circle, banners, windows, plaque, crystal, lantern, chain, books, rack)
+#          Table (stone, gold trim, runner, magic circle, banners, windows, plaque, amethyst, lantern, chain, books, pages, potions)
 # Metals: Verdantite (green, gold rim, leaf), Infernalite (red, orange rim, flame), Voidsteel (violet, lavender rim, ring).
 # Run: powershell -File tools\texgen\gen_forgebound_blocks.ps1
 Add-Type -AssemblyName System.Drawing
@@ -197,22 +197,30 @@ Save-Tex (New-Stone @('#5E5474', '#685E80', '#564C6A') '#2E2638' '#80749A' '#463
 Save-Tex (New-Stone @('#3A2E50', '#43365C', '#352A48') '#221A30' '#56487A' '#2E2440') $blockDir 'rune_table_stone_dark'
 # gold trim (same as the anvil's)
 Copy-Item (Join-Path $blockDir 'forge_anvil_gold.png') (Join-Path $blockDir 'rune_table_gold.png') -Force
-# runner: purple cloth with gold hems along the sides
-$b = New-Tex
-for ($y = 0; $y -lt 16; $y++) { for ($x = 0; $x -lt 16; $x++) { Set-Px $b $x $y (Get-Pick @('#4B1C7E', '#56228C', '#3E176A') @(5, 3, 2)) } }
-for ($y = 0; $y -lt 16; $y++) { Set-Px $b 0 $y '#E0A33A'; Set-Px $b 15 $y '#C9862A' }
-Save-Tex $b $blockDir 'rune_table_runner'
-# magic circle (overlay): two rings, rune ticks, a triangle star in the middle
+# runner (top face uses 12x16): plum cloth with a faint woven diamond, a dark inner line and gold hems down both sides;
+# columns 12..15 are plain cloth for the thin edges
 $b = New-Tex
 for ($y = 0; $y -lt 16; $y++) {
-    for ($x = 0; $x -lt 16; $x++) {
-        $d = [Math]::Sqrt(($x - 7.5) * ($x - 7.5) + ($y - 7.5) * ($y - 7.5))
-        if ($d -ge 6.6 -and $d -lt 7.5) { Set-Px $b $x $y '#D27CFF' }
-        elseif ($d -ge 5.0 -and $d -lt 5.7 -and (($x + $y) % 3) -ne 0) { Set-Px $b $x $y '#A54CF0' }
+    for ($x = 0; $x -lt 12; $x++) {
+        $c = if ($x -eq 0 -or $x -eq 11) { '#E0A33A' } elseif ($x -eq 1 -or $x -eq 10) { '#33114F' }
+             elseif (((($x + $y) % 6) -eq 0) -or ((($x - $y + 96) % 6) -eq 0)) { '#4E1E86' } else { '#46197A' }
+        Set-Px $b $x $y $c
+    }
+    for ($x = 12; $x -lt 16; $x++) { Set-Px $b $x $y '#3E166C' }
+}
+Save-Tex $b $blockDir 'rune_table_runner'
+# magic circle (glowing overlay, 10x10): an outer ring, a dashed inner ring, four rune marks and a star in the middle
+$b = New-Tex
+for ($y = 0; $y -lt 10; $y++) {
+    for ($x = 0; $x -lt 10; $x++) {
+        $dx = $x - 4.5; $dy = $y - 4.5; $d = [Math]::Sqrt($dx * $dx + $dy * $dy)
+        if ($d -ge 3.9 -and $d -lt 4.9) { Set-Px $b $x $y '#C46CFF' }
+        elseif ($d -ge 2.3 -and $d -lt 3.0 -and (($x + $y) % 2) -eq 0) { Set-Px $b $x $y '#9A40F0' }
     }
 }
-foreach ($pt in @(@(7, 3), @(8, 3), @(6, 5), @(9, 5), @(5, 7), @(10, 7), @(4, 9), @(5, 9), @(6, 9), @(7, 9), @(8, 9), @(9, 9), @(10, 9), @(11, 9), @(7, 6), @(8, 6))) { Set-Px $b $pt[0] $pt[1] '#F0C8FF' }
-Set-Px $b 7 7 '#FFFFFF'; Set-Px $b 8 7 '#FFFFFF'
+foreach ($pt in @(@(4, 1), @(5, 1), @(4, 8), @(5, 8), @(1, 4), @(1, 5), @(8, 4), @(8, 5))) { Set-Px $b $pt[0] $pt[1] '#F0C8FF' }
+foreach ($pt in @(@(4, 3), @(5, 3), @(3, 4), @(6, 4), @(3, 5), @(6, 5), @(4, 6), @(5, 6))) { Set-Px $b $pt[0] $pt[1] '#E07CFF' }
+foreach ($pt in @(@(4, 4), @(5, 4), @(4, 5), @(5, 5))) { Set-Px $b $pt[0] $pt[1] '#FFF4FF' }
 Save-Tex $b $blockDir 'rune_table_circle'
 # banner (overlay): purple cloth, gold border, glowing rune, swallow-tail point at the bottom
 $b = New-Tex
@@ -246,16 +254,6 @@ for ($y = 0; $y -lt 16; $y++) {
 }
 foreach ($pt in @(@(7, 4), @(8, 4), @(7, 5), @(8, 5), @(7, 6), @(8, 6), @(7, 7), @(8, 7), @(7, 8), @(8, 8), @(7, 9), @(8, 9), @(7, 10), @(8, 10), @(5, 6), @(6, 6), @(9, 6), @(10, 6), @(6, 11), @(9, 11))) { Set-Px $b $pt[0] $pt[1] '#E07CFF' }
 Save-Tex $b $blockDir 'rune_table_plaque'
-# crystal facets
-$b = New-Tex
-for ($y = 0; $y -lt 16; $y++) {
-    for ($x = 0; $x -lt 16; $x++) {
-        $c = if ($x -lt 4) { '#B866FF' } elseif ($x -lt 8) { '#9A40F0' } elseif ($x -lt 12) { '#7A28D0' } else { '#5A1AA8' }
-        if ((($x + 2 * $y) % 11) -eq 0) { $c = '#E6B8FF' }
-        Set-Px $b $x $y $c
-    }
-}
-Save-Tex $b $blockDir 'rune_table_crystal'
 # lantern: violet glass (0..5 x 0..6) in a dark iron frame, iron plate (8..15 x 0..1), cap (8..11 x 2..4)
 $b = New-Tex
 for ($y = 0; $y -lt 7; $y++) {
@@ -275,19 +273,59 @@ for ($y = 0; $y -lt 16; $y++) {
     else { Set-Px $b 6 $y '#B8862B'; Set-Px $b 9 $y '#8C6420' }
 }
 Save-Tex $b $blockDir 'rune_table_chain'
-# books: violet leather with gold bands; pages: cream with violet script
+# amethyst (vanilla amethyst palette and shard shapes, drawn at the table's pixel size; shown as crossed planes):
+#   (0,0) 9x9 floating cluster, (9,0) 7x7 desk cluster, (9,8) 5x4 small bud, (14,8) 1x2 candle flame
+$am = @{ h = '#FFFDD5'; t = '#FECBE6'; l = '#CFA0F3'; k = '#B38EF3'; m = '#8D6ACC'; d = '#7A5BB5'; x = '#64479E'; f = '#FFF2B0'; g = '#FFB347' }
 $b = New-Tex
-for ($y = 0; $y -lt 16; $y++) { for ($x = 0; $x -lt 16; $x++) { Set-Px $b $x $y (Get-Pick @('#5B1F7E', '#6A268F', '#4B186A') @(5, 3, 2)) } }
-foreach ($bx in @(3, 12)) { for ($y = 0; $y -lt 16; $y++) { Set-Px $b $bx $y '#E0A33A' } }
+Write-Mask $b @(
+    '....h....',
+    '...tlm...',
+    '...lkd...',
+    '.t.lkd.t.',
+    'tlmlkdtmd',
+    '.lmlkdmd.',
+    '.lklmdmd.',
+    '..lmmdd..',
+    '...mdx...') $am 0 0
+Write-Mask $b @(
+    '...h...',
+    '..tlm..',
+    't.lkd.t',
+    'lmlkdmd',
+    '.lkmdd.',
+    '.lmmdx.',
+    '..mdx..') $am 9 0
+Write-Mask $b @(
+    '..t..',
+    '.tld.',
+    'tlkmd',
+    '.mdx.') $am 9 8
+Write-Mask $b @('f', 'g') $am 14 8
+Save-Tex $b $blockDir 'rune_table_crystal'
+# books: (0,0) 3x4 violet cover, (4,0) 2x3 crimson cover, (8..15, 0..7) plain violet leather, (8..15, 8..15) plain
+# crimson leather, (0,5) 4x2 violet spine and (6,5) 3x2 crimson spine with gold bands, (0,12) a row of page edges
+$b = New-Tex
+for ($y = 0; $y -lt 16; $y++) { for ($x = 8; $x -lt 16; $x++) { Set-Px $b $x $y ($(if ($y -lt 8) { Get-Pick @('#5B1F7E', '#62228A', '#551C76') @(5, 2, 2) } else { Get-Pick @('#7A1E2A', '#842230', '#701A26') @(5, 2, 2) })) } }
+Write-Mask $b @('dvv', 'dvv', 'dgv', 'dvv') @{ d = '#3E1258'; v = '#5B1F7E'; g = '#F2C04E' } 0 0
+Write-Mask $b @('dr', 'dg', 'dr') @{ d = '#4E1018'; r = '#7A1E2A'; g = '#F2C04E' } 4 0
+Write-Mask $b @('gvvg', 'gvvg') @{ v = '#4B186A'; g = '#E0A33A' } 0 5
+Write-Mask $b @('grg', 'grg') @{ r = '#5E1620'; g = '#E0A33A' } 6 5
+for ($x = 0; $x -lt 16; $x++) { Set-Px $b $x 12 ($(if (($x % 2) -eq 0) { '#F1E5D2' } else { '#DCCAA8' })) }
 Save-Tex $b $blockDir 'rune_table_book'
+# open book pages: (0,0) 3x3 left page and (3,0) 3x3 right page (violet script, a glowing rune, shaded gutter between),
+# row 4 page edges
 $b = New-Tex
-for ($y = 0; $y -lt 16; $y++) { for ($x = 0; $x -lt 16; $x++) { Set-Px $b $x $y ($(if (($x % 2) -eq 0) { '#F1E5D2' } else { '#EADBC4' })) } }
-foreach ($ry in @(3, 5, 7, 10, 12)) { for ($x = 2; $x -lt 14; $x++) { if ((($x * 7 + $ry) % 5) -ne 0 -and $x -ne 7 -and $x -ne 8) { Set-Px $b $x $ry '#8A55C8' } } }
-for ($y = 0; $y -lt 16; $y++) { Set-Px $b 7 $y '#C9B48E'; Set-Px $b 8 $y '#D8C6A4' }
+Write-Mask $b @('ssq', 'ppq', 'ssq') @{ p = '#F1E5D2'; s = '#9A70C8'; q = '#D2BE98' } 0 0
+Write-Mask $b @('qpp', 'qrp', 'qpp') @{ p = '#F1E5D2'; r = '#B44CF0'; q = '#D2BE98' } 3 0
+for ($x = 0; $x -lt 16; $x++) { Set-Px $b $x 4 ($(if (($x % 2) -eq 0) { '#F1E5D2' } else { '#DCCAA8' })) }
 Save-Tex $b $blockDir 'rune_table_pages'
-# dark wood for the potion corks, glass for the potions
+# dark wood for corks and stands
 $b = New-Tex; Fill-Noise $b @('#4A2E1E', '#5A3826', '#3E2618') @(5, 3, 2); Save-Tex $b $blockDir 'rune_table_wood'
+# potions: (0,0) 3x3 violet body, (4,0) 2x2 violet, (7,0) 2x2 amber, (10,0) glass neck
 $b = New-Tex
-for ($y = 0; $y -lt 16; $y++) { for ($x = 0; $x -lt 16; $x++) { Set-Px $b $x $y ($(if ($x -lt 3) { '#E6A8FF' } elseif ($x -lt 9) { '#B44CF0' } else { '#7A28C8' })) } }
+Write-Mask $b @('wlm', 'hmd', 'mdx') @{ w = '#E6C8FF'; l = '#C48CFF'; h = '#F3E2FF'; m = '#9A40F0'; d = '#7A28C8'; x = '#5A1AA8' } 0 0
+Write-Mask $b @('hm', 'mx') @{ h = '#F3E2FF'; m = '#B44CF0'; x = '#6A20B8' } 4 0
+Write-Mask $b @('hm', 'mx') @{ h = '#FFF2C8'; m = '#FFB347'; x = '#C9741E' } 7 0
+Set-Px $b 10 0 '#D8C8F0'
 Save-Tex $b $blockDir 'rune_table_potion'
 'block textures written'
