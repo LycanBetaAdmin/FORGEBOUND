@@ -39,28 +39,36 @@ $metals = [ordered]@{
     voidsteel   = @{ o = '#14082A'; d = '#4A1E8C'; m = '#8A44E6'; l = '#C48CFF'; h = '#F3E2FF'; rim = '#B98CF0'; rimD = '#7A50B8'; face = '#3A2A58'; faceD = '#211736'; emb = '#E05CFF' }
 }
 
-# ---- raw metal: three crystal shards rising from grey stones
-function Draw-Shard($b, [int]$cx, [int]$top, [int]$bottom, [int]$half, $p) {
-    for ($y = $top; $y -le $bottom; $y++) {
-        $w = [Math]::Min($half, [Math]::Max(0, $y - $top))
-        for ($x = $cx - $w; $x -le $cx + $w; $x++) {
-            $c = if ($x -eq $cx - $w -or $x -eq $cx + $w -or $y -eq $top) { $p.o } elseif ($x -lt $cx) { $p.l } elseif ($x -eq $cx) { $p.m } else { $p.d }
+# ---- raw metal (vanilla raw-ore style): a cluster of chunky grey rock lumps, lit from the top left, with the metal
+# showing through in patches at their lower edges and tips
+$stone = @{ o = '#2A2A30'; d = '#5E5E66'; m = '#8E8E96'; l = '#B4B4BA'; h = '#D8D8DC' }
+function Draw-Lump($b, [double]$cx, [double]$cy, [double]$rx, [double]$ry, $p) {
+    for ($y = 0; $y -lt 16; $y++) {
+        for ($x = 0; $x -lt 16; $x++) {
+            $nx = ($x + 0.5 - $cx) / $rx; $ny = ($y + 0.5 - $cy) / $ry
+            $d = [Math]::Sqrt($nx * $nx + $ny * $ny)
+            if ($d -gt 1.0) { continue }
+            $c = if ($d -gt 0.8) { $p.o } else {
+                $s = $nx + $ny * 1.2
+                if ($s -lt -0.75) { $p.h } elseif ($s -lt -0.2) { $p.l } elseif ($s -lt 0.45) { $p.m } else { $p.d }
+            }
             Set-Px $b $x $y $c
         }
     }
-    Set-Px $b ($cx - 1) ($top + 2) $p.h
 }
 foreach ($name in $metals.Keys) {
     $p = $metals[$name]; $b = New-Tex
-    Draw-Shard $b 4 4 12 2 $p
-    Draw-Shard $b 8 1 12 2 $p
-    Draw-Shard $b 12 5 12 2 $p
-    $stones = @(
-        '.ssttss..sstts..',
-        'sttuuttssttuutss',
-        'stuuuutttuuuuuts',
-        '.sstuussstuusss.')
-    Write-Mask $b $stones @{ s = '#3A3A40'; t = '#6E6E78'; u = '#9A9AA4' } 0 12
+    $metal = @{ o = $p.o; d = $p.d; m = $p.m; l = $p.l; h = $p.h }
+    # back lumps first, the front lump last so its outline sits over them
+    Draw-Lump $b 5.2 5.4 4.6 4.4 $stone
+    Draw-Lump $b 11 6.2 4.2 4.4 $stone
+    Draw-Lump $b 8 10.6 5.4 4.6 $stone
+    # metal showing through at the lumps' lower edges and tips
+    Draw-Lump $b 2.6 8.6 2.0 1.9 $metal
+    Draw-Lump $b 13.2 9.4 2.0 2.0 $metal
+    Draw-Lump $b 5.6 13.4 2.2 1.8 $metal
+    Draw-Lump $b 11 13.2 2.0 1.8 $metal
+    Draw-Lump $b 9.2 2.6 1.5 1.4 $metal
     Save-Tex $b $itemDir "raw_$name"
 }
 
