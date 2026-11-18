@@ -1,0 +1,12 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:wither", "minecraft:ender_dragon", "minecraft:elder_guardian", "minecraft:warden",
+    {"id": "#c:bosses", "required": false},
+    {"id": "eldoria:dullahan", "required": false},
+    {"id": "eldoria:ice_queen", "required": false},
+    {"id": "eldoria:raja_hampa", "required": false},
+    {"id": "eldoria:hulubalang_jiwa", "required": false},
+    {"id": "eldoria:penunggu_urat_emas", "required": false}
+  ]
+}

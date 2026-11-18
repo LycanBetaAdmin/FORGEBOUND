@@ -1,0 +1,4 @@
+{
+  "parent": "forgebound:block/ore_overlay",
+  "textures": {"particle": "minecraft:block/netherrack", "base": "minecraft:block/netherrack", "overlay": "forgebound:block/infernalite_ore_overlay"}
+}

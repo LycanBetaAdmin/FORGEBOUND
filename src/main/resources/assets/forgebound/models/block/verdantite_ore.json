@@ -1,0 +1,4 @@
+{
+  "parent": "forgebound:block/ore_overlay",
+  "textures": {"particle": "minecraft:block/stone", "base": "minecraft:block/stone", "overlay": "forgebound:block/verdantite_ore_overlay"}
+}

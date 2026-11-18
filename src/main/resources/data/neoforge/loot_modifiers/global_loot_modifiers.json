@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "entries": [
+    "forgebound:fortress_infernalite",
+    "forgebound:end_city_voidsteel",
+    "forgebound:dungeon_arcane_shard",
+    "forgebound:amethyst_arcane_shard",
+    "forgebound:chest_tiers"
+  ]
+}

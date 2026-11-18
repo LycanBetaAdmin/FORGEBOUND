@@ -1,0 +1,1 @@
+{"type": "minecraft:blasting", "category": "misc", "ingredient": [{"item": "forgebound:verdantite_ore"}, {"item": "forgebound:deepslate_verdantite_ore"}], "result": {"id": "forgebound:verdantite_ingot"}, "experience": 0.7, "cookingtime": 100}

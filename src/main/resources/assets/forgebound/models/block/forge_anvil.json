@@ -1,0 +1,23 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "forgebound:block/forge_anvil_steel",
+    "base": "forgebound:block/forge_anvil_base",
+    "steel": "forgebound:block/forge_anvil_steel",
+    "face": "forgebound:block/forge_anvil_face",
+    "top": "forgebound:block/forge_anvil_top",
+    "runes": "forgebound:block/forge_anvil_runes"
+  },
+  "elements": [
+    {"from": [1, 0, 2], "to": [15, 4, 14], "faces": {"north": {"texture": "#base"}, "south": {"texture": "#base"}, "east": {"texture": "#base"}, "west": {"texture": "#base"}, "up": {"texture": "#base"}, "down": {"texture": "#base", "cullface": "down"}}},
+    {"from": [3, 4, 4], "to": [13, 5, 12], "faces": {"north": {"texture": "#steel"}, "south": {"texture": "#steel"}, "east": {"texture": "#steel"}, "west": {"texture": "#steel"}, "up": {"texture": "#steel"}}},
+    {"from": [4, 5, 5], "to": [12, 10, 11], "faces": {"north": {"texture": "#steel"}, "south": {"texture": "#steel"}, "east": {"texture": "#steel"}, "west": {"texture": "#steel"}}},
+    {"from": [5, 7, 4.95], "to": [11, 8.5, 5], "shade": false, "neoforge_data": {"block_light": 15, "sky_light": 15}, "faces": {"north": {"uv": [4, 6, 10, 8.5], "texture": "#runes"}}},
+    {"from": [5, 7, 11], "to": [11, 8.5, 11.05], "shade": false, "neoforge_data": {"block_light": 15, "sky_light": 15}, "faces": {"south": {"uv": [4, 6, 10, 8.5], "texture": "#runes"}}},
+    {"from": [0, 10, 3], "to": [16, 16, 13], "faces": {"north": {"uv": [0, 5, 16, 11], "texture": "#face"}, "south": {"uv": [0, 5, 16, 11], "texture": "#face"}, "east": {"uv": [3, 5, 13, 11], "texture": "#face"}, "west": {"uv": [3, 5, 13, 11], "texture": "#face"}, "up": {"uv": [0, 3, 16, 13], "texture": "#top"}, "down": {"texture": "#steel"}}},
+    {"from": [2, 12, 2.95], "to": [14, 13.5, 3], "shade": false, "neoforge_data": {"block_light": 15, "sky_light": 15}, "faces": {"north": {"uv": [1, 6, 15, 9], "texture": "#runes"}}},
+    {"from": [2, 12, 13], "to": [14, 13.5, 13.05], "shade": false, "neoforge_data": {"block_light": 15, "sky_light": 15}, "faces": {"south": {"uv": [1, 6, 15, 9], "texture": "#runes"}}},
+    {"from": [3, 16, 7.25], "to": [13, 16.05, 8.75], "shade": false, "neoforge_data": {"block_light": 15, "sky_light": 15}, "faces": {"up": {"uv": [1, 6, 15, 9], "texture": "#runes"}}}
+  ]
+}

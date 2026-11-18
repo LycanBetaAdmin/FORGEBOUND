@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": ["GSG", "IAI", "OOO"],
+  "key": {
+    "G": {"item": "minecraft:gold_ingot"},
+    "S": {"item": "forgebound:arcane_shard"},
+    "I": {"item": "minecraft:iron_block"},
+    "A": {"item": "minecraft:anvil"},
+    "O": {"item": "minecraft:obsidian"}
+  },
+  "result": {"id": "forgebound:forge_anvil", "count": 1}
+}

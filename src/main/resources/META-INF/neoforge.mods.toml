@@ -1,0 +1,35 @@
+modLoader = "javafml"
+loaderVersion = "[4,)"
+license = "All Rights Reserved"
+
+[[mods]]
+modId = "forgebound"
+version = "1.0.0"
+displayName = "FORGEBOUND"
+authors = "LeonHart"
+description = '''Equipment evolution: weapon, armor and tool tiers (T1-T7), reforging at the Forge Anvil, dimensional metals, Unique Attributes, enhancements and material recovery.'''
+
+[[dependencies.forgebound]]
+modId = "neoforge"
+type = "required"
+versionRange = "[21.1.0,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.forgebound]]
+modId = "minecraft"
+type = "required"
+versionRange = "[1.21.1,1.21.2)"
+ordering = "NONE"
+side = "BOTH"
+
+# Eldoria RPG (optional): the Blacksmith job decides crafted tiers and Forge Anvil limits.
+[[dependencies.forgebound]]
+modId = "eldoria_rpg"
+type = "optional"
+versionRange = "[1.0.0,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[mixins]]
+config = "forgebound.mixins.json"

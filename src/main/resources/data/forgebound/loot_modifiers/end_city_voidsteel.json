@@ -1,0 +1,1 @@
+{"type": "neoforge:add_table", "conditions": [{"condition": "neoforge:loot_table_id", "loot_table_id": "minecraft:chests/end_city_treasure"}], "table": "forgebound:chests/end_city_voidsteel"}
