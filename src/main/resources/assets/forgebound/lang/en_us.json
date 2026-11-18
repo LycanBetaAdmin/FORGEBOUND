@@ -162,5 +162,15 @@
   "enhancement.forgebound.efficient": "Mining Speed",
   "enhancement.forgebound.lucky": "Luck",
   "enhancement.forgebound.reaching": "Block Reach",
-  "enhancement.forgebound.insightful": "Experience Gained"
+  "enhancement.forgebound.insightful": "Experience Gained",
+  "block.forgebound.ruinforged_crucible": "Ruinforged Crucible",
+  "screen.forgebound.crucible.hint": "Burn gear for its materials",
+  "screen.forgebound.crucible.hint2": "Max 50%% back, by durability",
+  "screen.forgebound.crucible.output": "Recovery Output",
+  "screen.forgebound.crucible.condition": "%s%% durability: %s%% back",
+  "screen.forgebound.crucible.chance": "Fractions round by chance",
+  "screen.forgebound.crucible.need_fuel": "Needs coal or charcoal",
+  "screen.forgebound.crucible.unrecoverable": "This can't be recovered",
+  "screen.forgebound.crucible.unrecoverable2": "It has no crafting recipe",
+  "screen.forgebound.crucible.output_blocked": "Empty the output first"
 }

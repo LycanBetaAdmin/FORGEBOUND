@@ -72,6 +72,10 @@ public final class ForgeboundConfig {
     @SerializedName("non_blacksmith_max_tier")
     public int nonBlacksmithMaxTier = 5;
 
+    /** Eldoria RPG's Armsmaster sells gear from this tier up to T7 (weighted like chest loot). */
+    @SerializedName("shop_min_tier")
+    public int shopMinTier = 5;
+
     @SerializedName("start_tiers")
     public Map<String, Integer> startTiers = new LinkedHashMap<>(Map.of("eldoria", 5));
 

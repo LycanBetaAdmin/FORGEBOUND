@@ -23,6 +23,7 @@ public enum GearType {
     }
 
     public static GearType of(Item item) {
+        if (item instanceof net.minecraft.world.item.AnimalArmorItem) return null; // horse and wolf armor: not player gear
         if (item instanceof ArmorItem || item instanceof ElytraItem) return ARMOR;
         if (item instanceof ShieldItem) return SHIELD;
         if (item instanceof ProjectileWeaponItem) return RANGED;

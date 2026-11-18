@@ -46,8 +46,16 @@ Forge Anvil with dimensional metals and reforge materials.
 - **Transfer tab**: moves every enhancement to another item of the same kind (free slots needed); 2 Arcane Shards and
   2 Crystal Dust per enhancement; the source loses them.
 
+## Phase 4
+- **Ruinforged Crucible = the Disassembly Forge** (moved here from Eldoria RPG; `eldoria_rpg:ruinforged_crucible` is
+  aliased, so placed Crucibles carry over). Burns gear on coal or charcoal: up to 50% back at full durability, falling
+  with wear, of the recipe's core material **and** of the FORGEBOUND upgrade materials paid to reach its tier (metals,
+  Arcane Shards, Crystal Dust, Ascension Cores). Six output slots; empty ones preview what comes back. Gear without a
+  recipe is refused.
+- **API** (`com.forgebound.api.ForgeboundApi`): gear type, tier, and the shop tier roll used by Eldoria RPG's Armsmaster
+  (T5-T7 by default, `shop_min_tier`). Animal armor is not FORGEBOUND gear.
+
 ## Planned
-4. Disassembly Forge (the Ruinforged Crucible)
 5. Apotheosis integration and the custom tooltip frame
 
 ## Building

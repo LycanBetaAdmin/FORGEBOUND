@@ -26,6 +26,7 @@ public final class ForgeboundClient {
             event.register(ModContent.REROLL_MENU.get(), RerollScreen::new);
             event.register(ModContent.ENGRAVE_MENU.get(), EngraveScreen::new);
             event.register(ModContent.TRANSFER_MENU.get(), TransferScreen::new);
+            event.register(ModContent.CRUCIBLE_MENU.get(), CrucibleScreen::new);
         }
     }
 

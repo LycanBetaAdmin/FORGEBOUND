@@ -1,0 +1,6 @@
+{
+  "parent": "forgebound:block/ruinforged_crucible",
+  "textures": {
+    "fire": "forgebound:block/ruinforged_crucible_fire"
+  }
+}

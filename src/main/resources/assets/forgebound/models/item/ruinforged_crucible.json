@@ -1,0 +1,11 @@
+{
+  "parent": "forgebound:block/ruinforged_crucible_lit",
+  "display": {
+    "gui": {"rotation": [30, 225, 0], "translation": [0, -1.75, 0], "scale": [0.46, 0.46, 0.46]},
+    "ground": {"rotation": [0, 0, 0], "translation": [0, 3, 0], "scale": [0.22, 0.22, 0.22]},
+    "fixed": {"rotation": [0, 0, 0], "translation": [0, -1, 0], "scale": [0.42, 0.42, 0.42]},
+    "thirdperson_righthand": {"rotation": [75, 45, 0], "translation": [0, 2.5, 0], "scale": [0.3, 0.3, 0.3]},
+    "firstperson_righthand": {"rotation": [0, 45, 0], "translation": [0, 0, 0], "scale": [0.32, 0.32, 0.32]},
+    "firstperson_lefthand": {"rotation": [0, 225, 0], "translation": [0, 0, 0], "scale": [0.32, 0.32, 0.32]}
+  }
+}

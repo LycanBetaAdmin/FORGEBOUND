@@ -51,6 +51,8 @@ public final class ModContent {
     private static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(Forgebound.MODID);
     private static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Forgebound.MODID);
     private static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(Registries.MENU, Forgebound.MODID);
+    private static final DeferredRegister<net.minecraft.world.level.block.entity.BlockEntityType<?>> BLOCK_ENTITIES =
+            DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, Forgebound.MODID);
     private static final DeferredRegister<MobEffect> EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT, Forgebound.MODID);
     private static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Forgebound.MODID);
     private static final DeferredRegister<MapCodec<? extends IGlobalLootModifier>> LOOT_MODIFIERS =
@@ -121,6 +123,18 @@ public final class ModContent {
     public static final DeferredHolder<MenuType<?>, MenuType<com.forgebound.enhance.TransferMenu>> TRANSFER_MENU =
             MENUS.register("rune_engraving_table_transfer", () -> new MenuType<>(com.forgebound.enhance.TransferMenu::new, FeatureFlags.VANILLA_SET));
 
+    // ---- Ruinforged Crucible: the Disassembly Forge (phase 4; moved here from Eldoria RPG)
+    public static final DeferredBlock<com.forgebound.disassembly.RuinforgedCrucibleBlock> CRUCIBLE = BLOCKS.register("ruinforged_crucible",
+            () -> new com.forgebound.disassembly.RuinforgedCrucibleBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).strength(5.0F, 1200.0F)
+                    .requiresCorrectToolForDrops().sound(SoundType.DEEPSLATE_BRICKS)
+                    .lightLevel(s -> s.getValue(com.forgebound.disassembly.RuinforgedCrucibleBlock.LIT) ? 13 : 8).noOcclusion()));
+    public static final DeferredItem<BlockItem> CRUCIBLE_ITEM = ITEMS.registerSimpleBlockItem(CRUCIBLE);
+    public static final DeferredHolder<net.minecraft.world.level.block.entity.BlockEntityType<?>, net.minecraft.world.level.block.entity.BlockEntityType<com.forgebound.disassembly.RuinforgedCrucibleBlockEntity>> CRUCIBLE_BE =
+            BLOCK_ENTITIES.register("ruinforged_crucible", () -> net.minecraft.world.level.block.entity.BlockEntityType.Builder.of(
+                    com.forgebound.disassembly.RuinforgedCrucibleBlockEntity::new, CRUCIBLE.get()).build(null));
+    public static final DeferredHolder<MenuType<?>, MenuType<com.forgebound.disassembly.CrucibleMenu>> CRUCIBLE_MENU =
+            MENUS.register("ruinforged_crucible", () -> new MenuType<>(com.forgebound.disassembly.CrucibleMenu::new, FeatureFlags.VANILLA_SET));
+
     public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<ChestTierModifier>> CHEST_TIERS =
             LOOT_MODIFIERS.register("chest_tiers", () -> ChestTierModifier.CODEC);
 
@@ -130,6 +144,7 @@ public final class ModContent {
             .displayItems((params, out) -> {
                 out.accept(FORGE_ANVIL_ITEM.get());
                 out.accept(RUNE_TABLE_ITEM.get());
+                out.accept(CRUCIBLE_ITEM.get());
                 for (Supplier<? extends ItemLike> s : List.<Supplier<? extends ItemLike>>of(VERDANTITE_ORE, DEEPSLATE_VERDANTITE_ORE, INFERNALITE_ORE, VOIDSTEEL_ORE,
                         RAW_VERDANTITE, VERDANTITE_INGOT, RAW_INFERNALITE, INFERNALITE_INGOT, RAW_VOIDSTEEL, VOIDSTEEL_INGOT,
                         ARCANE_SHARD, CRYSTAL_DUST, ASCENSION_CORE, FORTUNE_DICE, SOUL_ESSENCE, FORTUNE_CRYSTAL, SEALING_RUNE)) {
@@ -158,6 +173,14 @@ public final class ModContent {
         TABS.register(modBus);
         LOOT_MODIFIERS.register(modBus);
         EFFECTS.register(modBus);
+        BLOCK_ENTITIES.register(modBus);
+        // Crucibles placed while Eldoria RPG owned them load as FORGEBOUND's (Eldoria RPG skips its own when FORGEBOUND is installed)
+        var old = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("eldoria_rpg", "ruinforged_crucible");
+        var now = Forgebound.id("ruinforged_crucible");
+        BLOCKS.addAlias(old, now);
+        ITEMS.addAlias(old, now);
+        BLOCK_ENTITIES.addAlias(old, now);
+        MENUS.addAlias(old, now);
     }
 
     /**

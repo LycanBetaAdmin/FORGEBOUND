@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": ["LAL", "SBS", "OOO"],
+  "key": {
+    "L": {"item": "minecraft:lantern"},
+    "A": {"item": "minecraft:amethyst_shard"},
+    "S": {"item": "minecraft:polished_blackstone_bricks"},
+    "B": {"item": "minecraft:blast_furnace"},
+    "O": {"item": "minecraft:obsidian"}
+  },
+  "result": {"id": "forgebound:ruinforged_crucible", "count": 1}
+}
